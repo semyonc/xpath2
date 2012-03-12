@@ -157,7 +157,7 @@ namespace Wmhelp.XPath2
         {
             get
             {
-                return CurrentPosition;
+                return CurrentPosition + 1;
             }
         }
 

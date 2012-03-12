@@ -106,6 +106,12 @@ namespace Wmhelp.XPath2
             }
         }
 
+        public override void ResetSequentialPosition()
+        {
+            if (!src.IsFinished)
+                src.ResetSequentialPosition();
+        }
+
         public override XPath2NodeIterator CreateBufferedIterator()
         {
             return Clone();

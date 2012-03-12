@@ -76,7 +76,7 @@ namespace Wmhelp.XPath2.Iterator
         {
             get
             {
-                return base.SequentialPosition;
+                return sequentialPosition;
             }
         }
 
