@@ -48,6 +48,11 @@ namespace Wmhelp.XPath2.AST
                 XPath2NodeIterator.Create(XPath2NodeIterator.Create(this[0].Execute(provider, dataPool))));
         }
 
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return XPath2ResultType.NodeSet;
+        }
+
         private bool MoveNext(IContextProvider provider, object[] dataPool, XPathItem curr, out object res)
         {
             if (curr.IsNode)

@@ -116,5 +116,10 @@ namespace Wmhelp.XPath2.AST
                 iter = new NodeIterator(CreateEnumerator(dataPool, this[k], iter));
             return iter;
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return XPath2ResultType.NodeSet;
+        }
     }
 }

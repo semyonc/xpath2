@@ -24,5 +24,15 @@ namespace Wmhelp.XPath2.AST
         {
             return _value;
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return CoreFuncs.GetXPath2ResultType(_value);
+        }
+
+        public override bool IsEmptySequence()
+        {
+            return _value == Undefined.Value;
+        }
     }
 }

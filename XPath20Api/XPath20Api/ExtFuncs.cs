@@ -1284,10 +1284,10 @@ namespace Wmhelp.XPath2
             Integer pos = 1;
             if (value is UntypedAtomic || value is AnyUriValue)
                 value = value.ToString();
-            while (iter.MoveNext())
+            foreach(XPathItem item in iter)
             {
                 bool res;
-                object curr = iter.Current.GetTypedValue();
+                object curr = item.GetTypedValue();
                 if (curr is UntypedAtomic || curr is AnyUriValue)
                     curr = curr.ToString();
                 if (ValueProxy.Eq(curr, value, out res) && res)

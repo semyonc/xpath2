@@ -14,17 +14,24 @@ namespace Wmhelp.XPath2.AST
     class UnaryOperatorNode: AbstractNode
     {
         protected UnaryOperator _unaryOper;
+        private XPath2ResultType _resultType;
 
-        public UnaryOperatorNode(XPath2Context context, UnaryOperator action, object node)
+        public UnaryOperatorNode(XPath2Context context, UnaryOperator action, object node, XPath2ResultType resultType)
             : base(context)
         {
             _unaryOper = action;
+            _resultType = resultType;
             Add(node);
         }
 
         public override object Execute(IContextProvider provider, object[] dataPool)
         {
             return _unaryOper(provider, this[0].Execute(provider, dataPool));
+        }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return _resultType;
         }
     }
 }

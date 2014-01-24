@@ -17,7 +17,7 @@ namespace Wmhelp.XPath2.AST
     {
         private String _name;
         private String _ns;
-        private XPathFunctionDelegate _func;        
+        private XPathFunctionDef _func;        
 
         public FuncNode(XPath2Context context, string name, string ns)
             : base(context)
@@ -63,7 +63,26 @@ namespace Wmhelp.XPath2.AST
             object[] args = new object[Count];
             for (int k = 0; k < Count; k++)
                 args[k] = ValueProxy.Unwrap(this[k].Execute(provider, dataPool));
-            return _func(Context, provider, args); 
+            return _func.Invoke(Context, provider, args); 
+        }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {            
+            if (_func.ResultType == XPath2ResultType.Any && Count > 0)
+            {
+                XPath2ResultType resType = this[0].GetItemType(dataPool);
+                if (resType == XPath2ResultType.NodeSet)
+                    return XPath2ResultType.Any;
+                return resType;
+            }
+            return _func.ResultType;
+        }
+
+        internal override XPath2ResultType GetItemType(object[] dataPool)
+        {
+            if (_func.Name == "string-to-codepoints")
+                return XPath2ResultType.Number;
+            return base.GetItemType(dataPool);
         }
 
         private static HashSet<String> s_aggregates;

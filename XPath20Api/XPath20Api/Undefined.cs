@@ -32,5 +32,10 @@ namespace Wmhelp.XPath2
         private static Undefined _value = new Undefined();
 
         public static Undefined Value { get { return _value; } }
+
+        public override string ToString()
+        {
+            return "()";
+        }
     }
 }

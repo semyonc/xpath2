@@ -1224,10 +1224,104 @@ namespace Wmhelp.XPath2
 
         public static XPathItem ContextNode(IContextProvider provider)
         {
+            if (provider == null)
+                throw new XPath2Exception(Properties.Resources.XPDY0002);
             XPathItem item = provider.Context;
             if (item == null)
                 throw new XPath2Exception(Properties.Resources.XPDY0002);
             return item;
+        }
+
+        public static XPath2ResultType GetXPath2ResultType(SequenceType sequenceType)
+        {
+            if (sequenceType.Cardinality == XmlTypeCardinality.ZeroOrMore ||
+                sequenceType.Cardinality == XmlTypeCardinality.OneOrMore)
+                return XPath2ResultType.NodeSet;
+            switch (sequenceType.TypeCode)
+            {
+                case XmlTypeCode.String:
+                    return XPath2ResultType.String;
+                case XmlTypeCode.Time:
+                case XmlTypeCode.Date:
+                case XmlTypeCode.DateTime:
+                    return XPath2ResultType.DateTime;
+                case XmlTypeCode.Boolean:
+                    return XPath2ResultType.Boolean;
+                case XmlTypeCode.AnyUri:
+                    return XPath2ResultType.AnyUri;
+                case XmlTypeCode.QName:
+                    return XPath2ResultType.QName;
+                case XmlTypeCode.GDay:
+                case XmlTypeCode.GMonth:
+                case XmlTypeCode.GMonthDay:
+                case XmlTypeCode.GYear:
+                case XmlTypeCode.GYearMonth:
+                    return XPath2ResultType.DateTime;
+                case XmlTypeCode.Duration:
+                case XmlTypeCode.DayTimeDuration:
+                case XmlTypeCode.YearMonthDuration:
+                    return XPath2ResultType.Duration;
+                default:
+                    if (SequenceType.TypeCodeIsNodeType(sequenceType.TypeCode))
+                        return XPath2ResultType.Navigator;
+                    if (sequenceType.IsNumeric)
+                        return XPath2ResultType.Number;
+                    return XPath2ResultType.Other;
+            }
+        }
+
+        public static XPath2ResultType GetXPath2ResultType(object value)
+        {
+            if (value == null || value == Undefined.Value)
+                return XPath2ResultType.Any;
+            if (value is XPath2NodeIterator)
+                return XPath2ResultType.NodeSet;
+            if (value is XPathItem)
+            {
+                XPathItem item = (XPathItem)value;
+                if (item.IsNode)
+                    return XPath2ResultType.Navigator;
+                else
+                    value = item.TypedValue;
+            }
+            ValueProxy proxy = value as ValueProxy;
+            if (proxy != null)
+                value = proxy.Value;
+            if (value is AnyUriValue)
+                return XPath2ResultType.AnyUri;
+            if (value is QNameValue)
+                return XPath2ResultType.QName;
+            if (value is Integer)
+                return XPath2ResultType.Number;
+            if (value is DateTimeValueBase || value is TimeValue)
+                return XPath2ResultType.DateTime;
+            if (value is DurationValue)
+                return XPath2ResultType.Duration;
+            switch (Type.GetTypeCode(value.GetType()))
+            {
+                case TypeCode.Boolean:
+                    return XPath2ResultType.Boolean;
+
+                case TypeCode.Char:
+                case TypeCode.String:
+                    return XPath2ResultType.String;
+
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.UInt16:
+                case TypeCode.Int16:
+                case TypeCode.UInt32:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.UInt64:
+                case TypeCode.Decimal:
+                case TypeCode.Single:
+                case TypeCode.Double:
+                    return XPath2ResultType.Number;               
+
+                default:
+                    return XPath2ResultType.Other;
+            }
         }
         
         public static object GetRoot(IContextProvider provider)

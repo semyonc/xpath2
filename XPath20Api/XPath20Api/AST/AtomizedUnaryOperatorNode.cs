@@ -11,8 +11,8 @@ namespace Wmhelp.XPath2.AST
 {
     class AtomizedUnaryOperatorNode : UnaryOperatorNode
     {
-        public AtomizedUnaryOperatorNode(XPath2Context context, UnaryOperator action, object node)
-            : base(context, action, node)
+        public AtomizedUnaryOperatorNode(XPath2Context context, UnaryOperator action, object node, XPath2ResultType resultType)
+            : base(context, action, node, resultType)
         {
         }
 

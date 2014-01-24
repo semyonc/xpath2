@@ -14,11 +14,13 @@ namespace Wmhelp.XPath2.AST
     class BinaryOperatorNode: AbstractNode
     {
         protected BinaryOperator _binaryOper;
+        private XPath2ResultType _resultType;
 
-        public BinaryOperatorNode(XPath2Context context, BinaryOperator action, object node1, object node2)
+        public BinaryOperatorNode(XPath2Context context, BinaryOperator action, object node1, object node2, XPath2ResultType resultType)
             : base(context)
         {
             _binaryOper = action;
+            _resultType = resultType;
             Add(node1);
             Add(node2);
         }
@@ -27,6 +29,11 @@ namespace Wmhelp.XPath2.AST
         {
             return _binaryOper(provider, this[0].Execute(provider, dataPool), 
                 this[1].Execute(provider, dataPool));
+        }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return _resultType;
         }
     }
 }

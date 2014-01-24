@@ -37,8 +37,8 @@ namespace Wmhelp.XPath2
                             root1.MoveToRoot();
                             XPathNavigator root2 = nav2.Clone();
                             root2.MoveToRoot();
-                            int hashCode1 = root1.GetHashCode();
-                            int hashCode2 = root2.GetHashCode();
+                            int hashCode1 = XPathNavigator.NavigatorComparer.GetHashCode(root1);
+                            int hashCode2 = XPathNavigator.NavigatorComparer.GetHashCode(root2);
                             if (hashCode1 < hashCode2)
                                 return -1;
                             else if (hashCode1 > hashCode2)

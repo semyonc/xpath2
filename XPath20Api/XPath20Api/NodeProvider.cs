@@ -9,7 +9,7 @@ using System.Xml.XPath;
 
 namespace Wmhelp.XPath2
 {
-    class NodeProvider : IContextProvider
+    public class NodeProvider : IContextProvider
     {
         private XPathItem item;
 

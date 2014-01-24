@@ -33,6 +33,32 @@ namespace Wmhelp.XPath2.AST
             return new ExprIterator(this, provider, dataPool);
         }
 
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            if (Count == 1)
+                return this[0].GetReturnType(dataPool);
+            return XPath2ResultType.NodeSet;
+        }
+
+        internal override XPath2ResultType GetItemType(object[] dataPool)
+        {
+            XPath2ResultType resType = XPath2ResultType.Any;
+            foreach (AbstractNode child in this)
+            {
+                if (!child.IsEmptySequence())
+                {
+                    XPath2ResultType itemType = child.GetItemType(dataPool);
+                    if (itemType != resType)
+                    {
+                        if (resType != XPath2ResultType.Any)
+                            return XPath2ResultType.Any;
+                        resType = itemType;
+                    }
+                }
+            }
+            return resType;
+        }
+
         private sealed class ExprIterator : XPath2NodeIterator
         {
             private IContextProvider provider;

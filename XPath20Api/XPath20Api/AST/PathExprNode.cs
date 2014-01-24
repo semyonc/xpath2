@@ -154,5 +154,10 @@ namespace Wmhelp.XPath2.AST
                 return new DocumentOrderNodeIterator(tail);
             return tail;
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return XPath2ResultType.NodeSet;
+        }
     }
 }

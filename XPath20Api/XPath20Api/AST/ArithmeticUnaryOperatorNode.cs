@@ -12,7 +12,7 @@ namespace Wmhelp.XPath2.AST
     class ArithmeticUnaryOperatorNode : AtomizedUnaryOperatorNode
     {
         public ArithmeticUnaryOperatorNode(XPath2Context context, UnaryOperator action, object node)
-            : base(context, action, node)
+            : base(context, action, node, XPath2ResultType.Number)
         {
         }
 
@@ -34,6 +34,6 @@ namespace Wmhelp.XPath2.AST
             {
                 throw new XPath2Exception(ex.Message, ex);
             }
-        }
+        }        
     }
 }

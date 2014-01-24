@@ -1,17 +1,18 @@
 ﻿// Microsoft Public License (Ms-PL)
 // See the file License.rtf or License.txt for the license details.
 
-// Copyright (c) 2011, Semyon A. Chertkov (semyonc@gmail.com)
+// Copyright (c) 2014, Semyon A. Chertkov (semyonc@gmail.com)
 // All rights reserved.
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 
 namespace Wmhelp.XPath2.AST
 {
-    sealed class AndExprNode: AbstractNode
+    sealed class RangeNode: AbstractNode
     {
-        public AndExprNode(XPath2Context context, object node1, object node2)
+        public RangeNode(XPath2Context context, object node1, object node2)
             : base(context)
         {
             Add(node1);
@@ -20,15 +21,18 @@ namespace Wmhelp.XPath2.AST
 
         public override object Execute(IContextProvider provider, object[] dataPool)
         {
-            if (CoreFuncs.BooleanValue(this[0].Execute(provider, dataPool)) == CoreFuncs.True &&
-                CoreFuncs.BooleanValue(this[1].Execute(provider, dataPool)) == CoreFuncs.True)
-                return CoreFuncs.True;
-            return CoreFuncs.False;
+            return CoreFuncs.GetRange(this[0].Execute(provider, dataPool), 
+                this[1].Execute(provider, dataPool));
         }
 
         public override XPath2ResultType GetReturnType(object[] dataPool)
         {
-            return XPath2ResultType.Boolean;
+            return XPath2ResultType.NodeSet;
+        }
+
+        internal override XPath2ResultType GetItemType(object[] dataPool)
+        {
+            return XPath2ResultType.Number;
         }
     }
 }

@@ -11,8 +11,8 @@ namespace Wmhelp.XPath2.AST
 {
     sealed class OrderedBinaryOperatorNode: BinaryOperatorNode
     {
-        public OrderedBinaryOperatorNode(XPath2Context context, BinaryOperator action, object node1, object node2)
-            : base(context, action, node1, node2)
+        public OrderedBinaryOperatorNode(XPath2Context context, BinaryOperator action, object node1, object node2, XPath2ResultType resultType)
+            : base(context, action, node1, node2, resultType)
         {
         }
     }

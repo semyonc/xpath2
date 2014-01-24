@@ -45,6 +45,7 @@
     <Compile Include="AST\ArithmeticUnaryOperatorNode.cs" />
     <Compile Include="AST\OrderedBinaryOperatorNode.cs" />
     <Compile Include="AST\PathStep.cs" />
+    <Compile Include="AST\RangeNode.cs" />
     <Compile Include="FunctionTable.cs" />
     <Compile Include="Iterator\AncestorNodeIterator.cs" />
     <Compile Include="Iterator\AttributeNodeIterator.cs" />
@@ -76,6 +77,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>XPath.y</DependentUpon>
     </Compile>
+    <Compile Include="XPath2ResultType.cs" />
     <Compile Include="XPathNodeIteratorAdapter.cs" />
     <Compile Include="NodeList.cs" />
     <Compile Include="AST\AbstractNode.cs" />

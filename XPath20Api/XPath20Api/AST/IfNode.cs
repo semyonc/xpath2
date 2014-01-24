@@ -28,5 +28,14 @@ namespace Wmhelp.XPath2.AST
             else
                 return this[2].Execute(provider, dataPool);
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            XPath2ResultType res1 = this[1].GetReturnType(dataPool);
+            XPath2ResultType res2 = this[2].GetReturnType(dataPool);
+            if (res1 == res2)
+                return res1;
+            return XPath2ResultType.Any;
+        }
     }
 }

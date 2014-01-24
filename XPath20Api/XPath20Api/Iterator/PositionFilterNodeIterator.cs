@@ -27,7 +27,7 @@ namespace Wmhelp.XPath2.Iterator
 
         public override XPath2NodeIterator Clone()
         {
-            return new PositionFilterNodeIterator(position, iter);
+            return new PositionFilterNodeIterator(position, iter.Clone());
         }
 
         public override XPath2NodeIterator CreateBufferedIterator()

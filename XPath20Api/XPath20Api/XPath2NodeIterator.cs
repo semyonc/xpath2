@@ -114,6 +114,17 @@ namespace Wmhelp.XPath2
             }
         }
 
+        public virtual bool IsEmpty
+        {
+            get
+            {
+                XPath2NodeIterator iter = Clone();
+                if (!iter.MoveNext())
+                    return true;
+                return false;
+            }
+        }
+
         public virtual bool IsSingleIterator
         {
             get
@@ -334,7 +345,7 @@ namespace Wmhelp.XPath2
 
             public override XPath2NodeIterator Clone()
             {
-                return new SingleIterator(_item);
+                return new SingleIterator(_item.Clone());
             }
 
             public override bool IsSingleIterator

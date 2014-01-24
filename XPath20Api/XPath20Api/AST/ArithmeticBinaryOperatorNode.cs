@@ -9,11 +9,18 @@ using System.Collections.Generic;
 
 namespace Wmhelp.XPath2.AST
 {
+
+    internal delegate XPath2ResultType GetReturnTypeDelegate(XPath2ResultType resType1, XPath2ResultType resType2);
+
     class ArithmeticBinaryOperatorNode : AtomizedBinaryOperatorNode
     {
-        public ArithmeticBinaryOperatorNode(XPath2Context context, BinaryOperator action, object node1, object node2)
-            : base(context, action, node1, node2)
+        private GetReturnTypeDelegate _returnTypeDelegate;
+
+        public ArithmeticBinaryOperatorNode(XPath2Context context, BinaryOperator action, 
+                object node1, object node2, GetReturnTypeDelegate returnTypeDelegate)
+            : base(context, action, node1, node2, XPath2ResultType.Number)
         {
+            _returnTypeDelegate = returnTypeDelegate;
         }
 
         public override object Execute(IContextProvider provider, object[] dataPool)
@@ -40,5 +47,72 @@ namespace Wmhelp.XPath2.AST
                 throw new XPath2Exception(ex.Message, ex);
             }
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            if (_returnTypeDelegate != null)
+            {
+                XPath2ResultType resType1 = this[0].GetReturnType(dataPool);
+                XPath2ResultType resType2 = this[1].GetReturnType(dataPool);
+                return _returnTypeDelegate(resType1, resType2);
+            }
+            return base.GetReturnType(dataPool);
+        }
+
+        public static XPath2ResultType AdditionResult(XPath2ResultType resType1, XPath2ResultType resType2)
+        {
+            if (resType1 == XPath2ResultType.Number ||
+                resType2 == XPath2ResultType.Number)
+                return XPath2ResultType.Number;
+            if (resType1 == XPath2ResultType.DateTime && resType2 == XPath2ResultType.Duration)
+                return XPath2ResultType.DateTime;
+            if (resType1 == XPath2ResultType.Duration)
+            {
+                if (resType2 == XPath2ResultType.Duration)
+                    return XPath2ResultType.Duration;
+                if (resType2 == XPath2ResultType.DateTime)
+                    return XPath2ResultType.DateTime;
+            }
+            return XPath2ResultType.Any;
+        }
+
+        public static XPath2ResultType SubstractionResult(XPath2ResultType resType1, XPath2ResultType resType2)
+        {
+            if (resType1 == XPath2ResultType.Number ||
+                resType2 == XPath2ResultType.Number)
+                return XPath2ResultType.Number;
+            if (resType1 == XPath2ResultType.DateTime)
+            {
+                if (resType2 == XPath2ResultType.DateTime)
+                    return XPath2ResultType.Duration;
+                if (resType2 == XPath2ResultType.Duration)
+                    return XPath2ResultType.DateTime;
+            }
+            if (resType1 == XPath2ResultType.Duration && resType2 == XPath2ResultType.Duration)
+                return XPath2ResultType.Duration;
+            return XPath2ResultType.Any;
+        }
+
+        public static XPath2ResultType MultiplyResult(XPath2ResultType resType1, XPath2ResultType resType2)
+        {
+            if ((resType1 == XPath2ResultType.Duration && resType2 == XPath2ResultType.Number) ||
+                (resType1 == XPath2ResultType.Number && resType2 == XPath2ResultType.Duration))
+                return XPath2ResultType.Duration;
+            if (resType1 == XPath2ResultType.Number && resType2 == XPath2ResultType.Number)
+                return XPath2ResultType.Number;
+            return XPath2ResultType.Any;
+        }
+
+        public static XPath2ResultType DivisionResult(XPath2ResultType resType1, XPath2ResultType resType2)
+        {
+            if (resType1 == XPath2ResultType.Duration && resType2 == XPath2ResultType.Number)
+                return XPath2ResultType.Duration;
+            if (resType1 == XPath2ResultType.Duration && resType2 == XPath2ResultType.Duration)
+                return XPath2ResultType.Number;
+            if (resType1 == XPath2ResultType.Number && resType2 == XPath2ResultType.Number)
+                return XPath2ResultType.Number;
+            return XPath2ResultType.Any;
+        }
+
     }
 }

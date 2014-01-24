@@ -36,5 +36,10 @@ namespace Wmhelp.XPath2.AST
         {
             return _varRef.Get(dataPool);
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return CoreFuncs.GetXPath2ResultType(_varRef.Get(dataPool));
+        }
     }
 }

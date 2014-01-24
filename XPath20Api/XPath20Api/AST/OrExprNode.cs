@@ -25,5 +25,10 @@ namespace Wmhelp.XPath2.AST
                 return CoreFuncs.True;
             return CoreFuncs.False;
         }
+
+        public override XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return XPath2ResultType.Boolean;
+        }
     }
 }

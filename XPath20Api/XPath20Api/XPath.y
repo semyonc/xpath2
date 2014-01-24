@@ -193,13 +193,13 @@ QuantifiedExpr
   {
      ForNode node = (ForNode)$2;
 	 node.AddTail($4);     
-	 $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Some(arg), node);
+	 $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Some(arg), node, XPath2ResultType.Boolean);
   }
   | EVERY QuantifiedExprBody SATISFIES ExprSingle
   {
      ForNode node = (ForNode)$2;
 	 node.AddTail($4);     
-	 $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Every(arg), node);
+	 $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Every(arg), node, XPath2ResultType.Boolean);
   }
   ; 
 
@@ -253,32 +253,32 @@ GeneralComp
   : RangeExpr '=' RangeExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.GeneralEQ(context, arg1, arg2), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.GeneralEQ(context, arg1, arg2), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr '!' '='  RangeExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.GeneralNE(context, arg1, arg2), $1, $4);
+	   (provider, arg1, arg2) => CoreFuncs.GeneralNE(context, arg1, arg2), $1, $4, XPath2ResultType.Boolean);
   }
   | RangeExpr '<' RangeExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.GeneralLT(context, arg1, arg2), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.GeneralLT(context, arg1, arg2), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr '<' '=' RangeExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.GeneralLE(context, arg1, arg2), $1, $4);
+	   (provider, arg1, arg2) => CoreFuncs.GeneralLE(context, arg1, arg2), $1, $4, XPath2ResultType.Boolean);
   }
   | RangeExpr '>' RangeExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.GeneralGT(context, arg1, arg2), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.GeneralGT(context, arg1, arg2), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr '>' '=' RangeExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.GeneralGE(context, arg1, arg2), $1, $4);
+	   (provider, arg1, arg2) => CoreFuncs.GeneralGE(context, arg1, arg2), $1, $4, XPath2ResultType.Boolean);
   }
   ; 
   
@@ -286,34 +286,34 @@ ValueComp
   : RangeExpr EQ RangeExpr
   {
      $$ = new AtomizedBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.OperatorEq(arg1, arg2), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.OperatorEq(arg1, arg2), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr NE RangeExpr
   {
      $$ = new AtomizedBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.Not(CoreFuncs.OperatorEq(arg1, arg2)), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.Not(CoreFuncs.OperatorEq(arg1, arg2)), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr LT RangeExpr
   {
      $$ = new AtomizedBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.OperatorGt(arg2, arg1), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.OperatorGt(arg2, arg1), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr LE RangeExpr
   {
      $$ = new AtomizedBinaryOperatorNode(context, 
 	   (provider, arg1, arg2) => CoreFuncs.OperatorGt(arg2, arg1) == CoreFuncs.True ||
-	      CoreFuncs.OperatorEq(arg1, arg2) == CoreFuncs.True ? CoreFuncs.True : CoreFuncs.False, $1, $3);
+	      CoreFuncs.OperatorEq(arg1, arg2) == CoreFuncs.True ? CoreFuncs.True : CoreFuncs.False, $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr GT RangeExpr
   {
      $$ = new AtomizedBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.OperatorGt(arg1, arg2), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.OperatorGt(arg1, arg2), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr GE RangeExpr
   {
      $$ = new AtomizedBinaryOperatorNode(context, 
 	   (provider, arg1, arg2) => CoreFuncs.OperatorGt(arg1, arg2) == CoreFuncs.True ||
-	      CoreFuncs.OperatorEq(arg1, arg2) == CoreFuncs.True ? CoreFuncs.True : CoreFuncs.False, $1, $3);
+	      CoreFuncs.OperatorEq(arg1, arg2) == CoreFuncs.True ? CoreFuncs.True : CoreFuncs.False, $1, $3, XPath2ResultType.Boolean);
   }
   ;
   
@@ -321,17 +321,17 @@ NodeComp
   : RangeExpr IS RangeExpr
   {
      $$ = new SingletonBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.SameNode(arg1, arg2), $1, $3);
+	   (provider, arg1, arg2) => CoreFuncs.SameNode(arg1, arg2), $1, $3, XPath2ResultType.Boolean);
   }
   | RangeExpr '<' '<' RangeExpr
   {
      $$ = new SingletonBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.PrecedingNode(arg1, arg2), $1, $4);
+	   (provider, arg1, arg2) => CoreFuncs.PrecedingNode(arg1, arg2), $1, $4, XPath2ResultType.Boolean);
   }
   | RangeExpr '>' '>' RangeExpr
   {
      $$ = new SingletonBinaryOperatorNode(context, 
-	   (provider, arg1, arg2) => CoreFuncs.FollowingNode(arg1, arg2), $1, $4);
+	   (provider, arg1, arg2) => CoreFuncs.FollowingNode(arg1, arg2), $1, $4, XPath2ResultType.Boolean);
   }
   ;   
 
@@ -340,8 +340,7 @@ RangeExpr
   : AdditiveExpr
   | AdditiveExpr TO AdditiveExpr
   {
-      $$ = new BinaryOperatorNode(context, 
-	    (provider, arg1, arg2) => CoreFuncs.GetRange(arg1, arg2), $1, $3);
+      $$ = new RangeNode(context, $1, $3);
   }
   ;
   
@@ -350,12 +349,14 @@ AdditiveExpr
   | AdditiveExpr '+' MultiplicativeExpr
   {
      $$ = new ArithmeticBinaryOperatorNode(context,
-	    (provider, arg1, arg2) => ValueProxy.New(arg1) + ValueProxy.New(arg2), $1, $3);
+	    (provider, arg1, arg2) => ValueProxy.New(arg1) + ValueProxy.New(arg2), $1, $3, 
+			ArithmeticBinaryOperatorNode.AdditionResult);
   }
   | AdditiveExpr '-' MultiplicativeExpr 
   {
      $$ = new ArithmeticBinaryOperatorNode(context,
-	    (provider, arg1, arg2) => ValueProxy.New(arg1) - ValueProxy.New(arg2), $1, $3);
+	    (provider, arg1, arg2) => ValueProxy.New(arg1) - ValueProxy.New(arg2), $1, $3, 
+			ArithmeticBinaryOperatorNode.SubstractionResult);
   }
   ;
   
@@ -364,22 +365,24 @@ MultiplicativeExpr
   | MultiplicativeExpr ML UnionExpr 
   {
      $$ = new ArithmeticBinaryOperatorNode(context,
-	    (provider, arg1, arg2) => ValueProxy.New(arg1) * ValueProxy.New(arg2), $1, $3);
+	    (provider, arg1, arg2) => ValueProxy.New(arg1) * ValueProxy.New(arg2), $1, $3, 
+			ArithmeticBinaryOperatorNode.MultiplyResult);
   }
   | MultiplicativeExpr DIV UnionExpr  
   {
      $$ = new ArithmeticBinaryOperatorNode(context,
-	    (provider, arg1, arg2) => ValueProxy.New(arg1) / ValueProxy.New(arg2), $1, $3);
+	    (provider, arg1, arg2) => ValueProxy.New(arg1) / ValueProxy.New(arg2), $1, $3, 
+			ArithmeticBinaryOperatorNode.DivisionResult);
   }
   | MultiplicativeExpr IDIV UnionExpr  
   {
      $$ = new ArithmeticBinaryOperatorNode(context,
-	    (provider, arg1, arg2) => ValueProxy.op_IntegerDivide(ValueProxy.New(arg1), ValueProxy.New(arg2)), $1, $3);
+	    (provider, arg1, arg2) => ValueProxy.op_IntegerDivide(ValueProxy.New(arg1), ValueProxy.New(arg2)), $1, $3, null);
   }
   | MultiplicativeExpr MOD UnionExpr  
   {
      $$ = new ArithmeticBinaryOperatorNode(context,
-	    (provider, arg1, arg2) => ValueProxy.New(arg1) % ValueProxy.New(arg2), $1, $3);
+	    (provider, arg1, arg2) => ValueProxy.New(arg1) % ValueProxy.New(arg2), $1, $3, null);
   }
   ;
 
@@ -388,12 +391,12 @@ UnionExpr
   | UnionExpr UNION IntersectExceptExpr
   {
      $$ = new OrderedBinaryOperatorNode(context, 
-	    (provider, arg1, arg2) => CoreFuncs.Union(context, arg1, arg2), $1, $3);
+	    (provider, arg1, arg2) => CoreFuncs.Union(context, arg1, arg2), $1, $3, XPath2ResultType.NodeSet);
   }
   | UnionExpr '|' IntersectExceptExpr 
   {
      $$ = new OrderedBinaryOperatorNode(context, 
-	    (provider, arg1, arg2) => CoreFuncs.Union(context, arg1, arg2), $1, $3);
+	    (provider, arg1, arg2) => CoreFuncs.Union(context, arg1, arg2), $1, $3, XPath2ResultType.NodeSet);
   }
   ;
   
@@ -402,12 +405,12 @@ IntersectExceptExpr
   | IntersectExceptExpr INTERSECT InstanceofExpr
   {
      $$ = new OrderedBinaryOperatorNode(context, 
-	    (provider, arg1, arg2) => CoreFuncs.Intersect(context, arg1, arg2), $1, $3);
+	    (provider, arg1, arg2) => CoreFuncs.Intersect(context, arg1, arg2), $1, $3, XPath2ResultType.NodeSet);
   }
   | IntersectExceptExpr EXCEPT InstanceofExpr
   {
      $$ = new BinaryOperatorNode(context, 
-	    (provider, arg1, arg2) => CoreFuncs.Except(context, arg1, arg2), $1, $3);
+	    (provider, arg1, arg2) => CoreFuncs.Except(context, arg1, arg2), $1, $3, XPath2ResultType.NodeSet);
   }
   ;
 
@@ -417,7 +420,7 @@ InstanceofExpr
   {
      SequenceType destType = (SequenceType)$3;
      $$ = new UnaryOperatorNode(context, 
-	    (provider, arg) => CoreFuncs.InstanceOf(context, arg, destType), $1);
+	    (provider, arg) => CoreFuncs.InstanceOf(context, arg, destType), $1, XPath2ResultType.Boolean);
   }
   ;
   
@@ -427,7 +430,7 @@ TreatExpr
   {
      SequenceType destType = (SequenceType)$3;
      $$ = new UnaryOperatorNode(context, 
-	    (provider, arg) => CoreFuncs.TreatAs(context, arg, destType), $1);
+	    (provider, arg) => CoreFuncs.TreatAs(context, arg, destType), $1, CoreFuncs.GetXPath2ResultType(destType));
   }
   ;
   
@@ -450,7 +453,7 @@ CastableExpr
          throw new XPath2Exception(Properties.Resources.XPST0080, destType);
      if (destType.Cardinality == XmlTypeCardinality.ZeroOrMore || destType.Cardinality == XmlTypeCardinality.OneOrMore)
          throw new XPath2Exception(Properties.Resources.XPST0080, destType);
-     $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Castable(context, arg, destType, isString), $1);
+     $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Castable(context, arg, destType, isString), $1, XPath2ResultType.Boolean);
   }
   ;
   
@@ -473,7 +476,8 @@ CastExpr
          throw new XPath2Exception(Properties.Resources.XPST0080, destType);
      if (destType.Cardinality == XmlTypeCardinality.ZeroOrMore || destType.Cardinality == XmlTypeCardinality.OneOrMore)
          throw new XPath2Exception(Properties.Resources.XPST0080, destType);
-     $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.CastTo(context, arg, destType, isString), $1);
+     $$ = new UnaryOperatorNode(context, (provider, arg) => 
+		CoreFuncs.CastTo(context, arg, destType, isString), $1, CoreFuncs.GetXPath2ResultType(destType));
   }
   ;
   
@@ -483,9 +487,9 @@ UnaryExpr
      if ($1 != null)
 	 {
 	   if ($1 == CoreFuncs.True)
-		  $$ = new AtomizedUnaryOperatorNode(context, (provider, arg) => -ValueProxy.New(arg), $2);
+		  $$ = new AtomizedUnaryOperatorNode(context, (provider, arg) => -ValueProxy.New(arg), $2, XPath2ResultType.Number);
 	    else
-	      $$ = new AtomizedUnaryOperatorNode(context, (provider, arg) => 0 + ValueProxy.New(arg), $2);
+	      $$ = new AtomizedUnaryOperatorNode(context, (provider, arg) => 0 + ValueProxy.New(arg), $2, XPath2ResultType.Number);
      }
 	 else
 	    $$ = $2;
@@ -521,7 +525,7 @@ PathExpr
   : '/' 
   {
      $$ = new UnaryOperatorNode(context, (provider, arg) => 
-		XPath2NodeIterator.Create(CoreFuncs.GetRoot(arg)), new ContextItemNode(context));
+		XPath2NodeIterator.Create(CoreFuncs.GetRoot(arg)), new ContextItemNode(context), XPath2ResultType.NodeSet);
   }
   | '/' RelativePathExpr
   { 
@@ -798,7 +802,7 @@ FunctionCall
             if (seqtype.TypeCode == XmlTypeCode.Notation)
                throw new XPath2Exception(Properties.Resources.XPST0051, "NOTATION");
             $$ = new UnaryOperatorNode(context, (provider, arg) => 
-			   CoreFuncs.CastToItem(context, arg, seqtype), args[0]); 
+			   CoreFuncs.CastToItem(context, arg, seqtype), args[0], CoreFuncs.GetXPath2ResultType(seqtype)); 
           }
 	  else
          $$ = new FuncNode(context, identity.Name, ns, (List<Object>)$3);

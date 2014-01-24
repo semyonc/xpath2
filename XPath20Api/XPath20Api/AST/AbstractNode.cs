@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.XPath;
 
 namespace Wmhelp.XPath2.AST
 {
@@ -114,6 +115,21 @@ namespace Wmhelp.XPath2.AST
         }
 
         public abstract object Execute(IContextProvider provider, object[] dataPool);
+
+        public virtual XPath2ResultType GetReturnType(object[] dataPool)
+        {
+            return XPath2ResultType.Any;
+        }
+
+        internal virtual XPath2ResultType GetItemType(object[] dataPool)
+        {
+            return GetReturnType(dataPool);
+        }
+
+        public virtual bool IsEmptySequence()
+        {
+            return false;
+        }
 
         #region IEnumerable<AbstractNode> Members
 
