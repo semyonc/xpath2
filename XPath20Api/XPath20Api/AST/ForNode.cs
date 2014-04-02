@@ -45,7 +45,7 @@ namespace Wmhelp.XPath2.AST
         public override object Execute(IContextProvider provider, object[] dataPool)
         {
             return new ForIterator(this, provider, dataPool,
-                XPath2NodeIterator.Create(XPath2NodeIterator.Create(this[0].Execute(provider, dataPool))));
+                XPath2NodeIterator.Create(this[0].Execute(provider, dataPool)));
         }
 
         public override XPath2ResultType GetReturnType(object[] dataPool)

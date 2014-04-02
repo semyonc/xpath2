@@ -88,15 +88,26 @@ namespace Wmhelp.XPath2
             return XPath2SelectSingleNode(nav, XPath2Expression.Compile(xpath, resolver));
         }
 
-        public static XmlNodeList XPath2SelectNodes(this XmlNode node, string xquery)
-        {            
-            return XPath2SelectNodes(node, xquery, null);
+        public static XmlNodeList XPath2SelectNodes(this XmlNode node, string xpath)
+        {
+            return XPath2SelectNodes(node, xpath, null);
         }
 
         public static XmlNodeList XPath2SelectNodes(this XmlNode node, string xpath, IXmlNamespaceResolver nsmgr)
         {
             XPathNavigator nav = node.CreateNavigator();
             return new NodeList(nav.XPath2Select(xpath, nsmgr), node.OwnerDocument);
+        }
+
+        public static object XPath2Evaluate(this XmlNode node, string xpath)
+        {
+            return XPath2Evaluate(node, xpath, null);
+        }
+
+        public static object XPath2Evaluate(this XmlNode node, string xpath, IXmlNamespaceResolver nsmgr)
+        {
+            XPathNavigator nav = node.CreateNavigator();
+            return nav.XPath2Evaluate(xpath, nsmgr);
         }
 
         public static XmlNode XPath2SelectSingleNode(this XmlNode node, string xquery)
