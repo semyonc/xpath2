@@ -74,6 +74,9 @@ namespace Wmhelp.XPath2
             XNode xnode = value as XNode;
             if (xnode != null)
                 return xnode.CreateNavigator();
+            XPath2NodeIterator iter = value as XPath2NodeIterator;
+            if (iter != null)
+                return iter;
             IEnumerable<XNode> en = value as IEnumerable<XNode>;
             if (en != null)
                 return new NodeIterator(CreateIterator(en));
@@ -103,6 +106,11 @@ namespace Wmhelp.XPath2
             return Evaluate(xpath2, null, arg);
         }
 
+        public static object Evaluate(string xpath2, IDictionary<XmlQualifiedName, object> param)
+        {
+            return Evalute(xpath2, null, param);
+        }
+
         public static object Evaluate(string xpath2, IXmlNamespaceResolver nsResolver)
         {
             return Evaluate(xpath2, nsResolver, null);
@@ -111,6 +119,11 @@ namespace Wmhelp.XPath2
         public static object Evaluate(string xpath2, IXmlNamespaceResolver nsResolver, object arg)
         {
             return XPath2Expression.Compile(xpath2, nsResolver, arg).Evaluate();
+        }
+
+        public static object Evalute(string xpath2, IXmlNamespaceResolver nsResolver, IDictionary<XmlQualifiedName, object> param)
+        {
+            return XPath2Expression.Compile(xpath2, nsResolver, param).Evaluate();
         }
 
         public static IEnumerable<T> Select<T>(string xpath, object arg)
@@ -148,6 +161,18 @@ namespace Wmhelp.XPath2
                 yield return iter.Current.GetTypedValue();
         }
 
+        public static IEnumerable<Object> SelectValues(string xpath, IDictionary<XmlQualifiedName,object> param)
+        {
+            return SelectValues(xpath, null, param);
+        }
+
+        public static IEnumerable<Object> SelectValues(string xpath, IXmlNamespaceResolver resolver, IDictionary<XmlQualifiedName, object> param)
+        {
+            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver, param).Evaluate());
+            while (iter.MoveNext())
+                yield return iter.Current.GetTypedValue();
+        }
+
         public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver, object arg)
         {
             IDictionary<string, object> param = null;
@@ -165,9 +190,9 @@ namespace Wmhelp.XPath2
                 }
             }
             return Compile(xpath, resolver, param);
-        }        
+        }
 
-        public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver, IDictionary<string, object> param)
+        public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver, IDictionary<XmlQualifiedName, object> param)
         {
             if (xpath == null)
                 throw new ArgumentNullException("xpath");
@@ -180,11 +205,11 @@ namespace Wmhelp.XPath2
             {
                 variables = new NameBinder.ReferenceLink[param.Count];
                 variableValues = new object[param.Count];
-                var array = new KeyValuePair<string, object>[param.Count];
+                var array = new KeyValuePair<XmlQualifiedName, object>[param.Count];
                 param.CopyTo(array, 0);
                 for (int k = 0; k < array.Length; k++)
                 {
-                    variables[k] = context.NameBinder.PushVar(new XmlQualifiedName(array[k].Key));
+                    variables[k] = context.NameBinder.PushVar(array[k].Key);
                     variableValues[k] = array[k].Value;
                 }
             }
