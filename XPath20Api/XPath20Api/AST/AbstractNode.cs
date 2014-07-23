@@ -9,15 +9,16 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 
 namespace Wmhelp.XPath2.AST
-{
+{    
     abstract class AbstractNode: IEnumerable<AbstractNode>
     {
         private AbstractNode _parent = null;
         private List<AbstractNode> _childs = null;
+        private XPath2Context _context = null;
 
         public AbstractNode(XPath2Context context)
         {
-            Context = context;
+            _context = context;
         }
 
         public int Count
@@ -32,7 +33,13 @@ namespace Wmhelp.XPath2.AST
 
         public AbstractNode Parent { get { return _parent; } }
 
-        public XPath2Context Context { get; private set; }
+        public XPath2Context Context
+        {
+            get
+            {
+                return _context;
+            }
+        }
 
         public bool IsLeaf { get { return _childs == null; } }
 

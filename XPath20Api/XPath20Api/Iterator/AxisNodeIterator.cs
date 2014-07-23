@@ -77,7 +77,7 @@ namespace Wmhelp.XPath2.Iterator
                 return false;
             XPathNavigator nav = iter.Current as XPathNavigator;
             if (nav == null)
-                throw new XPath2Exception(Properties.Resources.XPTY0019, iter.Current.Value);
+                throw new XPath2Exception("XPTY0019", Properties.Resources.XPTY0019, iter.Current.Value);
             if (curr == null || !curr.MoveTo(nav))
                 curr = nav.Clone();
             sequentialPosition = 0;

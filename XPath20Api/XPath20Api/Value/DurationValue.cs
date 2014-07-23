@@ -201,7 +201,7 @@ namespace Wmhelp.XPath2.Value
                 tok.NextToken();
             }
             if (tok.Token != 'P')
-                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
             if (tok.NextToken() == StringTokenizer.TokenInt)
             {
                 for (int i = 1; i <= 3; i++)
@@ -215,27 +215,27 @@ namespace Wmhelp.XPath2.Value
                     {
                         case 'Y':
                             if (year != -1)
-                                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                             year = value;
                             tok.NextToken();
                             break;
 
                         case 'M':
                             if (month != -1)
-                                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                             month = value;
                             tok.NextToken();
                             break;
 
                         case 'D':
                             if (day != -1)
-                                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                             day = value;
                             tok.NextToken();
                             break;
 
                         default:
-                            throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                            throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                     }
                 }
                 if (tok.Token == 0)
@@ -243,26 +243,26 @@ namespace Wmhelp.XPath2.Value
             }
         ParseDayTimeFraction:
             if (tok.Token != 'T' || tok.NextToken() != StringTokenizer.TokenInt)
-                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
             for (int i = 1; i <= 3; i++)
             {
                 if (tok.Token == 0)
                     goto Complete;
                 if (tok.Token != StringTokenizer.TokenInt)
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                 value = Int32.Parse(tok.Value);
                 switch (tok.NextToken())
                 {                    
                     case 'H':
                         if (h != -1)
-                            throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                            throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                         h = value;
                         tok.NextToken();
                         break;
                     
                     case 'M':
                         if (m != -1)
-                            throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                            throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                         m = value;
                         tok.NextToken();
                         break;
@@ -272,18 +272,18 @@ namespace Wmhelp.XPath2.Value
                         if (tok.Token == '.')
                         {
                             if (tok.NextToken() != StringTokenizer.TokenInt)
-                                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                             ms = Int32.Parse(tok.Value.PadRight(3, '0'));
                             tok.NextToken();
                         }
                         if (tok.Token != 'S')
-                            throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                            throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
                         goto Complete;
                 }
             }
         Complete:
             if (tok.NextToken() != 0)
-                throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:duration");
+                throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:duration");
             if (year == -1)
                 year = 0;
             if (month == -1)
@@ -389,7 +389,7 @@ namespace Wmhelp.XPath2.Value
 
             protected override bool Gt(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:gt",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:gt",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }
@@ -401,48 +401,48 @@ namespace Wmhelp.XPath2.Value
 
             protected override ValueProxy Neg()
             {
-                throw new XPath2Exception(Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
+                throw new XPath2Exception("", Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Add(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:add",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:add",
                     new SequenceType(Value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Sub(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:sub",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:sub",
                     new SequenceType(Value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Mul(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mul",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mul",
                     new SequenceType(Value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Div(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:div",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:div",
                     new SequenceType(Value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override Integer IDiv(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
                     new SequenceType(Value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Mod(ValueProxy val)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mod",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mod",
                     new SequenceType(Value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
             }

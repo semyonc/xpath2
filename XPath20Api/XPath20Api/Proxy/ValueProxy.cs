@@ -194,7 +194,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Eq(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:eq",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:eq",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -274,7 +274,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Gt(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:gt",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:gt",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -370,7 +370,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Add(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:add",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:add",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -399,7 +399,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Sub(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:sub",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:sub",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -423,7 +423,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Mul(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mul",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mul",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -447,7 +447,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Div(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:div",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:div",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -471,7 +471,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).Mod(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mod",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mod",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -495,7 +495,7 @@ namespace Wmhelp.XPath2.Proxy
                     {
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             return val2.Promote(val1).IDiv(val2);
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
                             new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                             new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -522,7 +522,7 @@ namespace Wmhelp.XPath2.Proxy
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             val1 = val2.Promote(val1);
                         else
-                            throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:gt",
+                            throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:gt",
                                 new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                                 new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }
@@ -553,7 +553,7 @@ namespace Wmhelp.XPath2.Proxy
                         if (conv_t[val2.GetValueCode(), val1.GetValueCode()] == 1)
                             val1 = val2.Promote(val1);
                         else
-                            throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:gt",
+                            throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:gt",
                                 new SequenceType(val1.GetType(), XmlTypeCardinality.One),
                                 new SequenceType(val2.GetType(), XmlTypeCardinality.One));
                     }

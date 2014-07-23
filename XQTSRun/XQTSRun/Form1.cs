@@ -644,10 +644,16 @@ namespace XQTSRun
         {
             public XPath2Expression expression;
             public IContextProvider provider;
+            public IDictionary<XmlQualifiedName, object> vars;
 
             public object Evalute()
             {
-                return expression.Evaluate(provider);
+                return expression.Evaluate(provider, vars);
+            }
+
+            public XPath2ResultType GetResultType()
+            {
+                return expression.GetResultType(vars);
             }
         }
 
@@ -669,7 +675,7 @@ namespace XQTSRun
             nsMgr.AddNamespace("foo", "http://example.org");
             nsMgr.AddNamespace("FOO", "http://example.org");
             nsMgr.AddNamespace("atomic", "http://www.w3.org/XQueryTest");
-            Dictionary<string, object> param = null;
+            Dictionary<XmlQualifiedName, object> vars = null;
             foreach (XmlNode child in node.ChildNodes)
             {
                 XmlElement curr = child as XmlElement;
@@ -677,13 +683,13 @@ namespace XQTSRun
                     continue;
                 if (curr.LocalName == "input-file")
                 {
-                    if (param == null)
-                        param = new Dictionary<string, object>();
+                    if (vars == null)
+                        vars = new Dictionary<XmlQualifiedName, object>();
                     string var = curr.GetAttribute("variable");
                     string id = curr.InnerText;
                     XmlDocument xmldoc = new XmlDocument(_nameTable);
                     xmldoc.Load(_sources[id]);
-                    param.Add(var, xmldoc.CreateNavigator());
+                    vars.Add(new XmlQualifiedName(var), xmldoc.CreateNavigator());
                 }
                 else if (curr.LocalName == "contextItem")
                 {
@@ -694,17 +700,18 @@ namespace XQTSRun
                 }
                 else if (curr.LocalName == "input-URI")
                 {
-                    if (param == null)
-                        param = new Dictionary<string, object>();
+                    if (vars == null)
+                        vars = new Dictionary<XmlQualifiedName, object>();
                     string var = curr.GetAttribute("variable");
                     string value = curr.InnerText;
                     string expandedUri;
                     if (!_sources.TryGetValue(value, out expandedUri))
                         expandedUri = value;
-                    param.Add(var, expandedUri);
+                    vars.Add(new XmlQualifiedName(var), expandedUri);
                 }                
             }
-            res.expression = XPath2Expression.Compile(xpath, nsMgr, param);
+            res.expression = XPath2Expression.Compile(xpath, nsMgr);
+            res.vars = vars;
             return res;
         }
 
@@ -717,7 +724,7 @@ namespace XQTSRun
                 try
                 {
                     preparedXPath = PrepareXPath(tw, testCase);
-                    expectedType = preparedXPath.expression.ReturnType;
+                    expectedType = preparedXPath.GetResultType();
                 }
                 catch (XPath2Exception)
                 {
@@ -732,12 +739,12 @@ namespace XQTSRun
                 {
                     res = preparedXPath.Evalute();
                     if (res != Undefined.Value && 
-                        preparedXPath.expression.ReturnType != expectedType)
+                        preparedXPath.GetResultType() != expectedType)
                     {
                         if (batchTest)
                             _out.Write("{0}: ", testCase.GetAttribute("name"));
                         _out.WriteLine("Expected type '{0}' differs the actual type '{1}'", 
-                            expectedType, preparedXPath.expression.ReturnType);
+                            expectedType, preparedXPath.GetResultType());
                     }
                 }
                 catch (XPath2Exception)

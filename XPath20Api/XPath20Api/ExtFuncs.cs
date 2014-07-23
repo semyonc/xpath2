@@ -22,7 +22,7 @@ using Wmhelp.XPath2.MS;
 
 namespace Wmhelp.XPath2
 {
-    static class ExtFuncs
+    public static class ExtFuncs
     {
         public static string GetName(IContextProvider provider)
         {
@@ -104,8 +104,8 @@ namespace Wmhelp.XPath2
             }
             while (nav.MoveToParent());
             Uri res = null;
-            if (context.BaseUri != null)
-                res = new Uri(context.BaseUri);
+            if (context.RunningContext.BaseUri != null)
+                res = new Uri(context.RunningContext.BaseUri);
             for (int k = uri.Count - 1; k >= 0; k--)
             {
                 if (res != null)
@@ -163,12 +163,12 @@ namespace Wmhelp.XPath2
         {
             foreach (XPathItem item in iter)
             {
-                if (item.IsNode)
+                if (item.IsNode && item.TypedValue == null)
                 {
                     XPathNavigator nav = (XPathNavigator)item;
                     if (nav.SchemaInfo != null &&
                         nav.SchemaInfo.SchemaType != null && !(nav.SchemaInfo.SchemaType is XmlSchemaSimpleType))
-                        throw new XPath2Exception(Properties.Resources.FOTY0012, new XmlQualifiedName(nav.LocalName, nav.NamespaceURI));
+                        throw new XPath2Exception("FOTY0012", Properties.Resources.FOTY0012, new XmlQualifiedName(nav.LocalName, nav.NamespaceURI));
                 }
                 yield return new XPath2Item(item.GetTypedValue());
             }
@@ -183,7 +183,7 @@ namespace Wmhelp.XPath2
         {
             StringBuilder sb = new StringBuilder();
             if (args.Length < 2)
-                throw new XPath2Exception(Properties.Resources.XPST0017, "concat",
+                throw new XPath2Exception("XPST0017", Properties.Resources.XPST0017, "concat",
                     args.Length, XmlReservedNs.NsXQueryFunc);
             foreach (object arg in args)
                 if (arg != Undefined.Value)
@@ -281,7 +281,7 @@ namespace Wmhelp.XPath2
             if (String.Equals(form, "NFKD", StringComparison.OrdinalIgnoreCase))
                 return value.Normalize(NormalizationForm.FormKD);
             if (form.Length != 0)
-                throw new XPath2Exception(Properties.Resources.UnsupportedNormalizationForm, form);
+                throw new XPath2Exception("", Properties.Resources.UnsupportedNormalizationForm, form);
             return value;
         }
 
@@ -476,7 +476,7 @@ namespace Wmhelp.XPath2
 
         public static bool Contains(XPath2Context context, object arg1, object arg2, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             return Contains(arg1, arg2);
         }
 
@@ -497,7 +497,7 @@ namespace Wmhelp.XPath2
 
         public static bool StartsWith(XPath2Context context, object arg1, object arg2, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             return StartsWith(arg1, arg2);
         }
 
@@ -518,7 +518,7 @@ namespace Wmhelp.XPath2
 
         public static bool EndsWith(XPath2Context context, object arg1, object arg2, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             return EndsWith(arg1, arg2);
         }
 
@@ -542,7 +542,7 @@ namespace Wmhelp.XPath2
 
         public static string SubstringBefore(XPath2Context context, object arg1, object arg2, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             return SubstringBefore(arg1, arg2);
         }
 
@@ -566,7 +566,7 @@ namespace Wmhelp.XPath2
 
         public static string SubstringAfter(XPath2Context context, object arg1, object arg2, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             return SubstringAfter(arg1, arg2);
         }
 
@@ -632,7 +632,7 @@ namespace Wmhelp.XPath2
                 if (charArr[k] == '\\')
                 {
                     if (k == charArr.Length - 1)
-                        throw new XPath2Exception(Properties.Resources.FORX0004, str);
+                        throw new XPath2Exception("FORX0004", Properties.Resources.FORX0004, str);
                     switch (charArr[k + 1])
                     {
                         case 'n':
@@ -656,7 +656,7 @@ namespace Wmhelp.XPath2
                             break;
 
                         default:
-                            throw new XPath2Exception(Properties.Resources.FORX0004, str);
+                            throw new XPath2Exception("FORX0004", Properties.Resources.FORX0004, str);
                     }
                     k++;
                 }
@@ -676,19 +676,19 @@ namespace Wmhelp.XPath2
                 input = (string)arg1;
             string pattern;
             if (arg2 == Undefined.Value)
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:matches");
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:matches");
             else
                 pattern = (string)arg2;
             RegexOptions flags;
             if (!ParseFlags(flagString, out flags))
-                throw new XPath2Exception(Properties.Resources.InvalidRegularExpressionFlags, flagString);
+                throw new XPath2Exception("", Properties.Resources.InvalidRegularExpressionFlags, flagString);
             try
             {
                 return new Regex(pattern, flags).IsMatch(input);
             }
             catch (ArgumentException)
             {
-                throw new XPath2Exception(Properties.Resources.InvalidRegularExpr, pattern);
+                throw new XPath2Exception("", Properties.Resources.InvalidRegularExpr, pattern);
             }
         }
 
@@ -701,7 +701,7 @@ namespace Wmhelp.XPath2
                 input = (string)arg1;
             string pattern;
             if (arg2 == Undefined.Value)
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:matches");
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:matches");
             else
                 pattern = (string)arg2;
             try
@@ -710,7 +710,7 @@ namespace Wmhelp.XPath2
             }
             catch (ArgumentException)
             {
-                throw new XPath2Exception(Properties.Resources.InvalidRegularExpr, pattern);
+                throw new XPath2Exception("", Properties.Resources.InvalidRegularExpr, pattern);
             }
         }
 
@@ -723,16 +723,16 @@ namespace Wmhelp.XPath2
                 input = (string)arg1;
             string pattern;
             if (arg2 == Undefined.Value)
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:replace");
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:replace");
             else
                 pattern = (string)arg2;
             if (!IsValidReplacementString(replacement))
-                throw new XPath2Exception(Properties.Resources.FORX0004, replacement);
+                throw new XPath2Exception("FORX0004", Properties.Resources.FORX0004, replacement);
             RegexOptions flags;
             if (!ParseFlags(flagString, out flags))
-                throw new XPath2Exception(Properties.Resources.InvalidRegularExpressionFlags, flagString);
+                throw new XPath2Exception("", Properties.Resources.InvalidRegularExpressionFlags, flagString);
             if (Regex.IsMatch("", pattern))
-                throw new XPath2Exception(Properties.Resources.FORX0003, pattern);
+                throw new XPath2Exception("FORX0003", Properties.Resources.FORX0003, pattern);
             return Regex.Replace(input, pattern, UnescapeReplacementString(replacement), flags);
         }
 
@@ -745,13 +745,13 @@ namespace Wmhelp.XPath2
                 input = (string)arg1;
             string pattern;
             if (arg2 == Undefined.Value)
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:replace");
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:replace");
             else
                 pattern = (string)arg2;
             if (!IsValidReplacementString(replacement))
-                throw new XPath2Exception(Properties.Resources.FORX0004, replacement);
+                throw new XPath2Exception("FORX0004", Properties.Resources.FORX0004, replacement);
             if (Regex.IsMatch("", pattern))
-                throw new XPath2Exception(Properties.Resources.FORX0003, pattern);
+                throw new XPath2Exception("FORX0003", Properties.Resources.FORX0003, pattern);
             return Regex.Replace(input, pattern, UnescapeReplacementString(replacement));
         }
 
@@ -774,14 +774,14 @@ namespace Wmhelp.XPath2
                 input = (string)arg1;
             string pattern;
             if (arg2 == Undefined.Value)
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:tokenize");
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:tokenize");
             else
                 pattern = (string)arg2;
             RegexOptions flags;
             if (!ParseFlags(flagString, out flags))
-                throw new XPath2Exception(Properties.Resources.InvalidRegularExpressionFlags, flagString);
+                throw new XPath2Exception("", Properties.Resources.InvalidRegularExpressionFlags, flagString);
             if (Regex.IsMatch("", pattern))
-                throw new XPath2Exception(Properties.Resources.FORX0003, pattern);
+                throw new XPath2Exception("FORX0003", Properties.Resources.FORX0003, pattern);
             return new NodeIterator(StringEnumerator(input, pattern, flags));
         }
 
@@ -794,11 +794,11 @@ namespace Wmhelp.XPath2
                 input = (string)arg1;
             string pattern;
             if (arg2 == Undefined.Value)
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:tokenize");
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "empty-sequnece()", "xs:string in fn:tokenize");
             else
                 pattern = (string)arg2;
             if (Regex.IsMatch("", pattern))
-                throw new XPath2Exception(Properties.Resources.FORX0003, pattern);
+                throw new XPath2Exception("FORX0003", Properties.Resources.FORX0003, pattern);
             return new NodeIterator(StringEnumerator(input, pattern, RegexOptions.None));
         }
 
@@ -1008,7 +1008,7 @@ namespace Wmhelp.XPath2
             }
             catch (ArgumentException)
             {
-                throw new XPath2Exception(Properties.Resources.FODT0003, _tz.ToString());
+                throw new XPath2Exception("FODT0003", Properties.Resources.FODT0003, _tz.ToString());
             }
         }
 
@@ -1041,7 +1041,7 @@ namespace Wmhelp.XPath2
             }
             catch (ArgumentException)
             {
-                throw new XPath2Exception(Properties.Resources.FODT0003, _tz.ToString());
+                throw new XPath2Exception("FODT0003", Properties.Resources.FODT0003, _tz.ToString());
             }
         }
 
@@ -1071,7 +1071,7 @@ namespace Wmhelp.XPath2
             }
             catch (ArgumentException)
             {
-                throw new XPath2Exception(Properties.Resources.FODT0003, _tz.ToString());
+                throw new XPath2Exception("FODT0003", Properties.Resources.FODT0003, _tz.ToString());
             }
         }
         
@@ -1090,7 +1090,7 @@ namespace Wmhelp.XPath2
             else if (value is Single)
                 return Math.Abs((float)value);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One),
                     "xs:float | xs:double | xs:decimal | xs:integer in fn:abs()");
         }
@@ -1110,7 +1110,7 @@ namespace Wmhelp.XPath2
             else if (value is Single)
                 return (float)Math.Ceiling((float)value);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One),
                     "xs:float | xs:double | xs:decimal | xs:integer in fn:ceiling()");
         }
@@ -1130,7 +1130,7 @@ namespace Wmhelp.XPath2
             else if (value is Single)
                 return (float)Math.Floor((float)value);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One),
                     "xs:float | xs:double | xs:decimal | xs:integer in fn:floor()");
         }
@@ -1150,7 +1150,7 @@ namespace Wmhelp.XPath2
             else if (value is Single)
                 return (float)Math.Round((float)value);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One),
                     "xs:float | xs:double | xs:decimal | xs:integer in fn:round()");
         }
@@ -1170,7 +1170,7 @@ namespace Wmhelp.XPath2
             else if (value is Single)
                 return (float)Math.Round((float)value, MidpointRounding.ToEven);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One),
                     "xs:float | xs:double | xs:decimal | xs:integer in fn:round-half-to-even()");
         }
@@ -1196,7 +1196,7 @@ namespace Wmhelp.XPath2
                 else if (value is Single)
                     return pow * Math.Round((float)value / pow, MidpointRounding.ToEven);
                 else
-                    throw new XPath2Exception(Properties.Resources.XPTY0004,
+                    throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                         new SequenceType(value.GetType(), XmlTypeCardinality.One),
                         "xs:float | xs:double | xs:decimal | xs:integer in fn:round-half-to-even()");
             }
@@ -1211,7 +1211,7 @@ namespace Wmhelp.XPath2
                 else if (value is Single)
                     return Math.Round((float)value, p, MidpointRounding.ToEven);
                 else
-                    throw new XPath2Exception(Properties.Resources.XPTY0004,
+                    throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                         new SequenceType(value.GetType(), XmlTypeCardinality.One),
                         "xs:float | xs:double | xs:decimal | xs:integer in fn:round-half-to-even()");
             }
@@ -1221,7 +1221,7 @@ namespace Wmhelp.XPath2
         {
             if (a == Undefined.Value || b == Undefined.Value)
                 return Undefined.Value;
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             String s1 = (String)a;
             String s2 = (String)b;
             return String.Compare(s1, s2, false, culture);
@@ -1303,7 +1303,7 @@ namespace Wmhelp.XPath2
 
         public static XPath2NodeIterator IndexOfSequence(XPath2Context context, XPath2NodeIterator iter, object value, string collation)
         {            
-            return new NodeIterator(IndexOfIterator(iter, value, context.GetCulture(collation)));
+            return new NodeIterator(IndexOfIterator(iter, value, context.RunningContext.GetCulture(collation)));
         }
 
         private static IEnumerable<XPathItem> RemoveIterator(XPath2NodeIterator iter, int index)
@@ -1402,7 +1402,7 @@ namespace Wmhelp.XPath2
                 else
                     res = probe.Current.GetTypedValue();
                 if (probe.MoveNext())
-                    throw new XPath2Exception(Properties.Resources.FORG0003);
+                    throw new XPath2Exception("FORG0003", Properties.Resources.FORG0003);
                 return res;
             }
             return Undefined.Value;
@@ -1413,7 +1413,7 @@ namespace Wmhelp.XPath2
             iter = iter.CreateBufferedIterator();
             XPath2NodeIterator probe = iter.Clone();
             if (!probe.MoveNext())
-                throw new XPath2Exception(Properties.Resources.FORG0004);
+                throw new XPath2Exception("FORG0004", Properties.Resources.FORG0004);
             return iter;
         }
 
@@ -1421,14 +1421,14 @@ namespace Wmhelp.XPath2
         {
             XPath2NodeIterator probe = iter.Clone();
             if (!probe.MoveNext())
-                throw new XPath2Exception(Properties.Resources.FORG0005);
+                throw new XPath2Exception("FORG0005", Properties.Resources.FORG0005);
             object res;
             if (probe.Current.IsNode)
                 res = probe.Current.Clone();
             else
                 res = probe.Current.GetTypedValue();
             if (probe.MoveNext())
-                throw new XPath2Exception(Properties.Resources.FORG0005);
+                throw new XPath2Exception("FORG0005", Properties.Resources.FORG0005);
             return res;
         }
 
@@ -1492,7 +1492,7 @@ namespace Wmhelp.XPath2
 
         public static XPath2NodeIterator DistinctValues(XPath2Context context, XPath2NodeIterator iter, string collation)
         {
-            return new NodeIterator(DistinctIterator(iter, context.GetCulture(collation)));
+            return new NodeIterator(DistinctIterator(iter, context.RunningContext.GetCulture(collation)));
         }
 
         public static bool DeepEqual(XPath2NodeIterator iter1, XPath2NodeIterator iter2)
@@ -1503,7 +1503,7 @@ namespace Wmhelp.XPath2
 
         public static bool DeepEqual(XPath2Context context, XPath2NodeIterator iter1, XPath2NodeIterator iter2, string collation)
         {
-            TreeComparer comparer = new TreeComparer(context.GetCulture(collation));
+            TreeComparer comparer = new TreeComparer(context.RunningContext.GetCulture(collation));
             return comparer.DeepEqual(iter1, iter2);
         }
 
@@ -1514,7 +1514,7 @@ namespace Wmhelp.XPath2
 
         public static object MaxValue(XPath2Context context, XPath2NodeIterator iter, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             ValueProxy acc = null;
             iter = iter.Clone();
             while (iter.MoveNext())
@@ -1531,7 +1531,7 @@ namespace Wmhelp.XPath2
                 }
                 catch (InvalidCastException)
                 {
-                    throw new XPath2Exception(Properties.Resources.FORG0006, "fn:max()",
+                    throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:max()",
                         new SequenceType(curr.GetType(), XmlTypeCardinality.One));
                 }
             }
@@ -1547,7 +1547,7 @@ namespace Wmhelp.XPath2
 
         public static object MinValue(XPath2Context context, XPath2NodeIterator iter, string collation)
         {
-            CultureInfo culture = context.GetCulture(collation);
+            CultureInfo culture = context.RunningContext.GetCulture(collation);
             ValueProxy acc = null;
             iter = iter.Clone();
             while (iter.MoveNext())
@@ -1564,7 +1564,7 @@ namespace Wmhelp.XPath2
                 }
                 catch (InvalidCastException)
                 {
-                    throw new XPath2Exception(Properties.Resources.FORG0006, "fn:min",
+                    throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:min",
                         new SequenceType(curr.GetType(), XmlTypeCardinality.One));
                 }
             }
@@ -1594,14 +1594,14 @@ namespace Wmhelp.XPath2
                     arg = ValueProxy.New(CoreFuncs.CastToNumber1(context, item.GetTypedValue()));
                     if (!(arg.IsNumeric() ||
                             arg.Value is YearMonthDurationValue || arg.Value is DayTimeDurationValue))
-                        throw new XPath2Exception(Properties.Resources.FORG0006, "fn:sum()",
+                        throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:sum()",
                             new SequenceType(item.GetTypedValue().GetType(), XmlTypeCardinality.One));
                     if (Integer.IsDerivedSubtype(arg.Value))
                         arg = (Integer)Convert.ToDecimal(arg);
                 }
                 catch (InvalidCastException)
                 {
-                    throw new XPath2Exception(Properties.Resources.FORG0006, "fn:sum()",
+                    throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:sum()",
                         new SequenceType(item.GetTypedValue().GetType(), XmlTypeCardinality.One));
                 }
                 if (acc == null)
@@ -1624,14 +1624,14 @@ namespace Wmhelp.XPath2
                     arg = ValueProxy.New(CoreFuncs.CastToNumber1(context, item.GetTypedValue()));
                     if (!(arg.IsNumeric() ||
                             arg.Value is YearMonthDurationValue || arg.Value is DayTimeDurationValue))
-                        throw new XPath2Exception(Properties.Resources.FORG0006, "fn:avg()",
+                        throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:avg()",
                             new SequenceType(item.GetTypedValue().GetType(), XmlTypeCardinality.One));
                     if (Integer.IsDerivedSubtype(arg.Value))
                         arg = (Integer)Convert.ToDecimal(arg);
                 }
                 catch (InvalidCastException)
                 {
-                    throw new XPath2Exception(Properties.Resources.FORG0006, "fn:avg()",
+                    throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:avg()",
                         new SequenceType(item.GetTypedValue().GetType(), XmlTypeCardinality.One));
                 }
                 if (acc == null)
@@ -1658,7 +1658,7 @@ namespace Wmhelp.XPath2
                 if (!date.IsLocal && !time.IsLocal)
                 {
                     if (date.Value.Offset != time.Value.Offset)
-                        throw new XPath2Exception(Properties.Resources.FORG0008);
+                        throw new XPath2Exception("FORG0008", Properties.Resources.FORG0008);
                     offset = date.Value.Offset;
                 }
                 else
@@ -1675,19 +1675,19 @@ namespace Wmhelp.XPath2
 
         public static DateTimeValue GetCurrentDateTime(XPath2Context context)
         {
-            return new DateTimeValue(false, new DateTimeOffset(context.now));
+            return new DateTimeValue(false, new DateTimeOffset(context.RunningContext.now));
         }
 
         public static DateValue GetCurrentDate(XPath2Context context)
         {
-            DateValue res = new DateValue(false, context.now.Date);
+            DateValue res = new DateValue(false, context.RunningContext.now.Date);
             res.IsLocal = false;
             return res;
         }
 
         public static TimeValue GetCurrentTime(XPath2Context context)
         {
-            return new TimeValue(new DateTimeOffset(context.now));
+            return new TimeValue(new DateTimeOffset(context.RunningContext.now));
         }
 
         public static void ScanLocalNamespaces(XmlNamespaceManager nsmgr, XPathNavigator node, bool recursive)
@@ -1770,7 +1770,7 @@ namespace Wmhelp.XPath2
                 return qname;
             QNameValue qnameValue = qname as QNameValue;
             if (qnameValue == null)
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(qname.GetType(), XmlTypeCardinality.One), "QName");
             if (qnameValue.Prefix == "")
                 return Undefined.Value;
@@ -1783,7 +1783,7 @@ namespace Wmhelp.XPath2
                 return qname;
             QNameValue qnameValue = qname as QNameValue;
             if (qnameValue == null)
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(qname.GetType(), XmlTypeCardinality.One), "QName");
             return qnameValue.LocalName;
         }
@@ -1794,7 +1794,7 @@ namespace Wmhelp.XPath2
                 return Undefined.Value;
             QNameValue qnameValue = qname as QNameValue;
             if (qnameValue == null)
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(qname.GetType(), XmlTypeCardinality.One), "QName");
             return new AnyUriValue(qnameValue.NamespaceUri);
         }
@@ -1813,14 +1813,14 @@ namespace Wmhelp.XPath2
             {
                 int codepoint = item.ValueAsInt;
                 if (!XmlCharType.Instance.IsCharData((char)codepoint))
-                    throw new XPath2Exception(Properties.Resources.FOCH0001, codepoint.ToString("X"));
+                    throw new XPath2Exception("FOCH0001", Properties.Resources.FOCH0001, codepoint.ToString("X"));
                 try
                 {
                     sb.Append(Convert.ToChar(codepoint));
                 }
                 catch
                 {
-                    throw new XPath2Exception(Properties.Resources.FOCH0001, codepoint.ToString("X"));
+                    throw new XPath2Exception("FOCH0001", Properties.Resources.FOCH0001, codepoint.ToString("X"));
                 }
             }
             return sb.ToString();
@@ -1836,15 +1836,15 @@ namespace Wmhelp.XPath2
             if (relative == Undefined.Value)
                 return Undefined.Value;
             string rel = (string)relative;
-            if (context.BaseUri == null)
-                throw new XPath2Exception(Properties.Resources.FONS0005);
+            if (context.RunningContext.BaseUri == null)
+                throw new XPath2Exception("FONS0005", Properties.Resources.FONS0005);
             try
             {
-                return new AnyUriValue(new Uri(new Uri(context.BaseUri), rel));
+                return new AnyUriValue(new Uri(new Uri(context.RunningContext.BaseUri), rel));
             }
             catch (UriFormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0009);
+                throw new XPath2Exception("FORG0009", Properties.Resources.FORG0009);
             }
         }
 
@@ -1859,7 +1859,7 @@ namespace Wmhelp.XPath2
             if (bsUri == "")
             {
                 if (!Uri.IsWellFormedUriString(rel, UriKind.Absolute))
-                    throw new XPath2Exception(Properties.Resources.FORG0009);
+                    throw new XPath2Exception("FORG0009", Properties.Resources.FORG0009);
                 return new AnyUriValue(rel);
             }
             try
@@ -1868,20 +1868,20 @@ namespace Wmhelp.XPath2
             }
             catch (UriFormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0009);
+                throw new XPath2Exception("FORG0009", Properties.Resources.FORG0009);
             }
         }
 
         public static object StaticBaseUri(XPath2Context context)
         {
-            if (context.BaseUri == null)
+            if (context.RunningContext.BaseUri == null)
                 return Undefined.Value;
-            return new AnyUriValue(context.BaseUri);
+            return new AnyUriValue(context.RunningContext.BaseUri);
         }
 
         public static DayTimeDurationValue ImplicitTimezone(XPath2Context context)
         {
-            return new DayTimeDurationValue(new DateTimeOffset(context.now).Offset);
+            return new DayTimeDurationValue(new DateTimeOffset(context.RunningContext.now).Offset);
         }
 
         public static bool NodeLang(IContextProvider provider, object testLang)
@@ -1895,7 +1895,7 @@ namespace Wmhelp.XPath2
                 return false;
             XPathNavigator nav = node as XPathNavigator;
             if (nav == null)
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(node.GetType(), XmlTypeCardinality.ZeroOrOne), "node()? in fn:lang()");
             string xmlLang = nav.XmlLang;
             if (xmlLang == "")

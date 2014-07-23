@@ -56,9 +56,9 @@ namespace Wmhelp.XPath2
 			{
 				throw;
 			}
-			catch (Exception)  
+			catch (Exception)   
 			{
-				throw new XPath2Exception ("{2} at line {1} pos {0}", tok.ColNo, tok.LineNo, errorText.ToString());
+				throw new XPath2Exception ("XPST0003", "{2} at line {1} pos {0}", tok.ColNo, tok.LineNo, errorText.ToString());
 			}
 		}
 
@@ -442,17 +442,17 @@ CastableExpr
 	 ValueNode value = $1 as ValueNode;
 	 bool isString = $1 is String || (value != null && value.Content is String);
      if (destType == null)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:untyped");
+         throw new XPath2Exception("XPST0051",Properties.Resources.XPST0051, "xs:untyped");
      if (destType.SchemaType == SequenceType.XmlSchema.AnyType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyType");
+         throw new XPath2Exception("XPST0051",Properties.Resources.XPST0051, "xs:anyType");
      if (destType.SchemaType == SequenceType.XmlSchema.AnySimpleType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anySimpleType");
+         throw new XPath2Exception("XPST0051",Properties.Resources.XPST0051, "xs:anySimpleType");
      if (destType.TypeCode == XmlTypeCode.AnyAtomicType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyAtomicType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anyAtomicType");
      if (destType.TypeCode == XmlTypeCode.Notation)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080", Properties.Resources.XPST0080, destType);
      if (destType.Cardinality == XmlTypeCardinality.ZeroOrMore || destType.Cardinality == XmlTypeCardinality.OneOrMore)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080",Properties.Resources.XPST0080, destType);
      $$ = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Castable(context, arg, destType, isString), $1, XPath2ResultType.Boolean);
   }
   ;
@@ -465,17 +465,17 @@ CastExpr
 	 ValueNode value = $1 as ValueNode;
 	 bool isString = $1 is String || (value != null && value.Content is String);
      if (destType == null)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:untyped");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:untyped");
      if (destType.SchemaType == SequenceType.XmlSchema.AnyType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anyType");
      if (destType.SchemaType == SequenceType.XmlSchema.AnySimpleType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anySimpleType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anySimpleType");
      if (destType.TypeCode == XmlTypeCode.AnyAtomicType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyAtomicType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anyAtomicType");
      if (destType.TypeCode == XmlTypeCode.Notation)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080", Properties.Resources.XPST0080, destType);
      if (destType.Cardinality == XmlTypeCardinality.ZeroOrMore || destType.Cardinality == XmlTypeCardinality.OneOrMore)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080", Properties.Resources.XPST0080, destType);
      $$ = new UnaryOperatorNode(context, (provider, arg) => 
 		CoreFuncs.CastTo(context, arg, destType, isString), $1, CoreFuncs.GetXPath2ResultType(destType));
   }
@@ -686,7 +686,7 @@ Wildcard
       string ncname = (String)$1;
       string ns = context.NamespaceManager.LookupNamespace(ncname);
       if (ns == null)
-        throw new XPath2Exception(Properties.Resources.XPST0081, ncname);
+        throw new XPath2Exception("XPST0081", Properties.Resources.XPST0081, ncname);
       $$ = XmlQualifiedNameTest.New(null, ns);      
    }
    | '*' ':' NCName 
@@ -798,9 +798,9 @@ FunctionCall
             SequenceType seqtype =
                new SequenceType((XmlSchemaSimpleType)schemaType, XmlTypeCardinality.One, null);
             if (seqtype == null)
-               throw new XPath2Exception(Properties.Resources.XPST0051, "untyped");
+               throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "untyped");
             if (seqtype.TypeCode == XmlTypeCode.Notation)
-               throw new XPath2Exception(Properties.Resources.XPST0051, "NOTATION");
+               throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "NOTATION");
             $$ = new UnaryOperatorNode(context, (provider, arg) => 
 			   CoreFuncs.CastToItem(context, arg, seqtype), args[0], CoreFuncs.GetXPath2ResultType(seqtype)); 
           }
@@ -1016,7 +1016,7 @@ SchemaElementTest
 	     context.NamespaceManager.DefaultNamespace, context.NameTable);
       XmlSchemaElement schemaElement = (XmlSchemaElement)context.SchemaSet.GlobalElements[qname];
       if (schemaElement == null)
-          throw new XPath2Exception(Properties.Resources.XPST0008, qname);
+          throw new XPath2Exception("XPST0008", Properties.Resources.XPST0008, qname);
       $$ = new SequenceType(schemaElement);      
    } 
    ;
@@ -1028,7 +1028,7 @@ SchemaAttributeTest
 	     context.NamespaceManager.DefaultNamespace, context.NameTable);
       XmlSchemaAttribute schemaAttribute = (XmlSchemaAttribute)context.SchemaSet.GlobalAttributes[qname];
       if (schemaAttribute == null)
-          throw new XPath2Exception(Properties.Resources.XPST0008, qname);
+          throw new XPath2Exception("XPST0008", Properties.Resources.XPST0008, qname);
       $$ = new SequenceType(schemaAttribute);      
    } 
    ;    

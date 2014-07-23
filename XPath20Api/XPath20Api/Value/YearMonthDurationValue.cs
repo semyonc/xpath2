@@ -51,7 +51,7 @@ namespace Wmhelp.XPath2.Value
         public static YearMonthDurationValue Multiply(YearMonthDurationValue a, double b)
         {
             if (Double.IsNaN(b) || Double.IsNegativeInfinity(b) || Double.IsPositiveInfinity(b))
-                throw new XPath2Exception(Properties.Resources.FOCA0005);
+                throw new XPath2Exception("FOCA0005", Properties.Resources.FOCA0005);
             int month = (int)Math.Floor(0.5 + DaysToMonth(a.HighPartValue.Days) * b);
             return new YearMonthDurationValue(new TimeSpan(MonthToDays(month), 0, 0, 0));
         }
@@ -59,9 +59,9 @@ namespace Wmhelp.XPath2.Value
         public static YearMonthDurationValue Divide(YearMonthDurationValue a, double b)
         {
             if (b == 0.0)
-                throw new XPath2Exception(Properties.Resources.FOAR0001);
+                throw new XPath2Exception("FOAR0001", Properties.Resources.FOAR0001);
             if (Double.IsNaN(b))
-                throw new XPath2Exception(Properties.Resources.FOCA0005);
+                throw new XPath2Exception("FOCA0005", Properties.Resources.FOCA0005);
             int month = (int)Math.Floor(0.5 + DaysToMonth(a.HighPartValue.Days) / b);
             return new YearMonthDurationValue(new TimeSpan(MonthToDays(month), 0, 0, 0));
         }
@@ -71,7 +71,7 @@ namespace Wmhelp.XPath2.Value
             int month1 = DaysToMonth(a.HighPartValue.Days);
             int month2 = DaysToMonth(b.HighPartValue.Days);
             if (month2 == 0)
-                throw new XPath2Exception(Properties.Resources.FOAR0001);
+                throw new XPath2Exception("FOAR0001", Properties.Resources.FOAR0001);
             return (decimal)month1 / (decimal)month2;
         }
 
@@ -165,7 +165,7 @@ namespace Wmhelp.XPath2.Value
 
             protected override ValueProxy Neg()
             {
-                throw new XPath2Exception(Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
+                throw new XPath2Exception("", Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One));
             }
 
@@ -180,7 +180,7 @@ namespace Wmhelp.XPath2.Value
                     case DateValue.ProxyValueCode:
                         return new DateValue.Proxy(DateValue.Add((DateValue)value.Value, _value));
                     default:
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:add",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:add",
                             new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                             new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
                 }
@@ -193,7 +193,7 @@ namespace Wmhelp.XPath2.Value
                     case YearMonthDurationValue.ProxyValueCode:
                         return new Proxy(new YearMonthDurationValue(_value.HighPartValue - ((YearMonthDurationValue)value.Value).HighPartValue));
                     default:
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:sub",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:sub",
                             new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                             new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
                 }
@@ -203,7 +203,7 @@ namespace Wmhelp.XPath2.Value
             {
                 if (value.IsNumeric())
                     return new Proxy (YearMonthDurationValue.Multiply(_value, Convert.ToDouble(value)));
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mul",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mul",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
@@ -215,21 +215,21 @@ namespace Wmhelp.XPath2.Value
                 else if (value.GetValueCode() == YearMonthDurationValue.ProxyValueCode)
                     return new DecimalProxy(YearMonthDurationValue.Divide(_value, (YearMonthDurationValue)value.Value));
                 else
-                    throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:div",
+                    throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:div",
                         new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                         new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override Integer IDiv(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Mod(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mod",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mod",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }

@@ -68,7 +68,7 @@ namespace Wmhelp.XPath2.AST
                             continue;
                         item = iter2.Current.Clone();
                         if (!item.IsNode && iter2.MoveNext())
-                            throw new XPath2Exception(Properties.Resources.FORG0006, "fn:boolean()",
+                            throw new XPath2Exception("FORG0006", Properties.Resources.FORG0006, "fn:boolean()",
                                 new SequenceType(XmlTypeCode.AnyAtomicType, XmlTypeCardinality.OneOrMore));
                     }
                     else

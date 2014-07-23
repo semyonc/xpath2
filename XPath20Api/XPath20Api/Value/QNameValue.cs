@@ -31,7 +31,7 @@ namespace Wmhelp.XPath2.Value
             if (nameTable == null)
                 throw new NullReferenceException("nameTable");
             if (prefix != "" && ns == "")
-                throw new XPath2Exception(Properties.Resources.FOCA0002,
+                throw new XPath2Exception("FOCA0002", Properties.Resources.FOCA0002,
                     String.Format("{0}:{1}", prefix, localName));
             try
             {
@@ -39,7 +39,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch(XmlException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, localName, "xs:QName");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, localName, "xs:QName");
             }
             Prefix = nameTable.Add(prefix);
             LocalName = nameTable.Add(localName);
@@ -125,7 +125,7 @@ namespace Wmhelp.XPath2.Value
             string localName;
             QNameParser.Split(qname.Trim(), out prefix, out localName);
             if (localName == null)
-                throw new XPath2Exception(Properties.Resources.FORG0001, qname, "xs:QName");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, qname, "xs:QName");
             return new QNameValue(prefix, localName, ns, nameTable);
         }
 
@@ -140,14 +140,14 @@ namespace Wmhelp.XPath2.Value
             string localName;
             QNameParser.Split(qname.Trim(), out prefix, out localName);
             if (localName == null)
-                throw new XPath2Exception(Properties.Resources.FORG0001, qname, "xs:QName");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, qname, "xs:QName");
             if (defaultNs == null)
                 defaultNs = String.Empty;
             if (!String.IsNullOrEmpty(prefix))
             {
                 string ns = resolver.LookupNamespace(prefix);
                 if (ns == null)
-                    throw new XPath2Exception(Properties.Resources.XPST0081, prefix);
+                    throw new XPath2Exception("XPST0081", Properties.Resources.XPST0081, prefix);
                 return new QNameValue(prefix, localName, ns, resolver.NameTable);
             }
             else

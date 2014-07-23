@@ -15,9 +15,9 @@ using Wmhelp.XPath2.MS;
 
 namespace Wmhelp.XPath2
 {
-    internal delegate object XPathFunctionDelegate(XPath2Context context, IContextProvider provider, object[] args);
+    public delegate object XPathFunctionDelegate(XPath2Context context, IContextProvider provider, object[] args);
 
-    internal class XPathFunctionDef
+    public class XPathFunctionDef
     {
         public String Name { get; private set; }
 
@@ -400,20 +400,25 @@ namespace Wmhelp.XPath2
                 CoreFuncs.Number(context, args[0]));
         }        
 
-        internal XPathFunctionDef Bind(string name, string ns, int arity)
+        public XPathFunctionDef Bind(string name, string ns, int arity)
         {
             XPathFunctionDef res;
             if (!_funcTable.TryGetValue(new FunctionDesc(name, ns, arity), out res))
-                return null;
+            {
+              // Just check if XPath 2010 function namespace is used, and if yes, try older version.
+              if (ns == XmlReservedNs.NsXPathFunc)
+                if (!_funcTable.TryGetValue(new FunctionDesc(name, XmlReservedNs.NsXQueryFunc, arity), out res))
+                    return null;
+            }
             return res;
         }
 
-        internal void Add(string ns, string name, XPath2ResultType resultType, XPathFunctionDelegate action)
+        public void Add(string ns, string name, XPath2ResultType resultType, XPathFunctionDelegate action)
         {
             Add(ns, name, -1, resultType, action);
         }
 
-        internal void Add(string ns, string name, int arity, XPath2ResultType resultType, XPathFunctionDelegate action)
+        public void Add(string ns, string name, int arity, XPath2ResultType resultType, XPathFunctionDelegate action)
         {
             _funcTable.Add(new FunctionDesc(name, ns, arity), 
                 new XPathFunctionDef(name, action, resultType));

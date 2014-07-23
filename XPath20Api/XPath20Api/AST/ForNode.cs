@@ -37,9 +37,9 @@ namespace Wmhelp.XPath2.AST
             this[0].Bind();
             XmlQualifiedName qname = QNameParser.Parse(_varName.ToString(),
                 Context.NamespaceManager, Context.NameTable);
-            _varRef = Context.NameBinder.PushVar(qname);
+            _varRef = Context.RunningContext.NameBinder.PushVar(qname);
             this[1].Bind();
-            Context.NameBinder.PopVar();
+            Context.RunningContext.NameBinder.PopVar();
         }
 
         public override object Execute(IContextProvider provider, object[] dataPool)

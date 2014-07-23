@@ -20,14 +20,12 @@ namespace Wmhelp.XPath2
 {
     public class XPath2Context
     {
-        internal DateTime now;
-        internal XmlSchemaSet schemaSet;
-
         public XPath2Context(IXmlNamespaceResolver nsManager)
         {
             NameTable = new NameTable();
             NamespaceManager = new XmlNamespaceManager(NameTable);
-
+            SchemaSet = new XmlSchemaSet(NameTable);
+            
             if (nsManager != null)
             {
                 foreach (KeyValuePair<String, String> ns in nsManager.GetNamespacesInScope(XmlNamespaceScope.ExcludeXml))
@@ -44,15 +42,30 @@ namespace Wmhelp.XPath2
                 NamespaceManager.AddNamespace("local", XmlReservedNs.NsXQueryLocalFunc);
             if (NamespaceManager.LookupNamespace("wmh") == null)
                 NamespaceManager.AddNamespace("wmh", XmlReservedNs.NsWmhExt);
+        }
 
+        public XPath2RunningContext RunningContext { get; set; }
+
+        public XmlNameTable NameTable { get; private set; }
+
+        public XmlNamespaceManager NamespaceManager { get; private set; }
+
+        public XmlSchemaSet SchemaSet { get; set; }        
+    }
+
+    public class XPath2RunningContext
+    {
+        internal DateTime now;
+
+        public XPath2RunningContext()
+        {
             now = DateTime.Now;
             NameBinder = new NameBinder();
-
+            
             DefaultCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
             DefaultCulture.NumberFormat.CurrencyGroupSeparator = "";
             DefaultCulture.NumberFormat.NumberGroupSeparator = "";
-
-            schemaSet = new XmlSchemaSet(NameTable);
+            
             IsOrdered = true;
         }
 
@@ -67,13 +80,9 @@ namespace Wmhelp.XPath2
             }
             catch (ArgumentException)
             {
-                throw new XPath2Exception(Properties.Resources.XQST0076, collationName);
+                throw new XPath2Exception("XQST0076", Properties.Resources.XQST0076, collationName);
             }
         }
-
-        public XmlNameTable NameTable { get; private set; }
-
-        public XmlNamespaceManager NamespaceManager { get; private set; }
 
         public CultureInfo DefaultCulture { get; private set; }
 
@@ -81,14 +90,7 @@ namespace Wmhelp.XPath2
 
         public bool IsOrdered { get; set; }
 
-        public XmlSchemaSet SchemaSet
-        {
-            get
-            {
-                return schemaSet;
-            }
-        }
-
         internal NameBinder NameBinder { get; private set; }
     }
+
 }

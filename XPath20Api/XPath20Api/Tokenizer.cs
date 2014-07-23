@@ -421,7 +421,7 @@ namespace Wmhelp.XPath2
                     if (c != 0 && XmlCharType.Instance.IsStartNCNameChar(c))
                         ConsumeNCName();
                     else
-                        throw new XPath2Exception(Properties.Resources.ExpectedNCName);
+                        throw new XPath2Exception("XPST0003", Properties.Resources.ExpectedNCName);
                 }
                 m_state = LexerState.Operator;
             }
@@ -455,7 +455,7 @@ namespace Wmhelp.XPath2
                 if (Peek(0) == '$')
                     ConsumeChar(Read());
                 else
-                    throw new XPath2Exception(Properties.Resources.ExpectedVariablePrefix, "for");
+                    throw new XPath2Exception("XPST0003", Properties.Resources.ExpectedVariablePrefix, "for");
                 m_state = LexerState.VarName;
             }
             else if (MatchIdentifer("some"))
@@ -467,7 +467,7 @@ namespace Wmhelp.XPath2
                 if (Peek(0) == '$')
                     ConsumeChar(Read());
                 else
-                    throw new XPath2Exception(Properties.Resources.ExpectedVariablePrefix, "some");
+                    throw new XPath2Exception("XPST0003", Properties.Resources.ExpectedVariablePrefix, "some");
                 m_state = LexerState.VarName;
             }
             else if (MatchIdentifer("every"))
@@ -479,7 +479,7 @@ namespace Wmhelp.XPath2
                 if (Peek(0) == '$')
                     ConsumeChar(Read());
                 else
-                    throw new XPath2Exception(Properties.Resources.ExpectedVariablePrefix, "every");
+                    throw new XPath2Exception("XPST0003", Properties.Resources.ExpectedVariablePrefix, "every");
                 m_state = LexerState.VarName;
             }
             else if (c == '$')
@@ -923,7 +923,7 @@ namespace Wmhelp.XPath2
                 if (Peek(0) == '$')
                     ConsumeChar(Read());
                 else
-                    throw new XPath2Exception(Properties.Resources.ExpectedVariablePrefix, "for");
+                    throw new XPath2Exception("", Properties.Resources.ExpectedVariablePrefix, "for");
                 m_state = LexerState.VarName;
             }
             else if (MatchIdentifer("eq"))

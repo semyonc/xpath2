@@ -37,7 +37,7 @@ namespace Wmhelp.XPath2.Value
         public static DayTimeDurationValue Multiply(DayTimeDurationValue a, double b)
         {
             if (Double.IsNaN(b) || Double.IsNegativeInfinity(b) || Double.IsPositiveInfinity(b))
-                throw new XPath2Exception(Properties.Resources.FOCA0005);
+                throw new XPath2Exception("FOCA0005", Properties.Resources.FOCA0005);
             long timespan = (long)(a.LowPartValue.Ticks * b);
             return new DayTimeDurationValue(new TimeSpan(timespan));
         }
@@ -45,9 +45,9 @@ namespace Wmhelp.XPath2.Value
         public static DayTimeDurationValue Divide(DayTimeDurationValue a, double b)
         {
             if (b == 0.0)
-                throw new XPath2Exception(Properties.Resources.FOAR0001);
+                throw new XPath2Exception("FOAR0001", Properties.Resources.FOAR0001);
             if (Double.IsNaN(b))
-                throw new XPath2Exception(Properties.Resources.FOCA0005);
+                throw new XPath2Exception("FOCA0005", Properties.Resources.FOCA0005);
             long timespan = (long)(a.LowPartValue.Ticks / b);
             return new DayTimeDurationValue(new TimeSpan(timespan));
         }
@@ -55,7 +55,7 @@ namespace Wmhelp.XPath2.Value
         private static decimal Divide(DayTimeDurationValue a, DayTimeDurationValue b)
         {
             if (b.LowPartValue == TimeSpan.Zero)
-                throw new XPath2Exception(Properties.Resources.FOAR0001);
+                throw new XPath2Exception("FOAR0001", Properties.Resources.FOAR0001);
             return (decimal)a.LowPartValue.Ticks / (decimal)b.LowPartValue.Ticks;
         }
 
@@ -150,7 +150,7 @@ namespace Wmhelp.XPath2.Value
 
             protected override ValueProxy Neg()
             {
-                throw new XPath2Exception(Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
+                throw new XPath2Exception("", Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One));
             }
 
@@ -167,7 +167,7 @@ namespace Wmhelp.XPath2.Value
                     case TimeValue.ProxyValueCode:
                         return new TimeValue.Proxy(TimeValue.Add((TimeValue)value.Value, _value));
                     default:
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:add",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:add",
                             new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                             new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
                 }
@@ -180,7 +180,7 @@ namespace Wmhelp.XPath2.Value
                     case DayTimeDurationValue.ProxyValueCode:
                         return new Proxy(new DayTimeDurationValue(_value.LowPartValue - ((DayTimeDurationValue)value.Value).LowPartValue));
                     default:
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:sub",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:sub",
                             new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                             new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
                 }
@@ -190,7 +190,7 @@ namespace Wmhelp.XPath2.Value
             {
                 if (value.IsNumeric())
                     return new Proxy(DayTimeDurationValue.Multiply(_value, Convert.ToDouble(value)));
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mul",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mul",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
@@ -202,21 +202,21 @@ namespace Wmhelp.XPath2.Value
                 else if (value.GetValueCode() == DayTimeDurationValue.ProxyValueCode)
                     return new DecimalProxy(DayTimeDurationValue.Divide(_value, (DayTimeDurationValue)value.Value));
                 else
-                    throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:div",
+                    throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:div",
                         new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                         new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override Integer IDiv(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Mod(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mod",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mod",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }

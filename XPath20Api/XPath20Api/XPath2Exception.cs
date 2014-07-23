@@ -15,12 +15,20 @@ namespace Wmhelp.XPath2
 {
     public class XPath2Exception: Exception
     {
+        public string ErrorCode { get; internal set; }
+
 		protected XPath2Exception (SerializationInfo info, StreamingContext context) : base (info, context) {}
 
 		public XPath2Exception (string message, Exception innerException) : base (message, innerException) {}
 
-		internal XPath2Exception (string message) : base (message, null) {}
+        internal XPath2Exception(string errorCode, string message) : base(message, null) 
+        {
+            ErrorCode = errorCode;
+        }
 
-        internal XPath2Exception(string message, params object[] args) : base(String.Format(message, args), null) { }
+        internal XPath2Exception(string errorCode, string message, params object[] args) : base(String.Format(message, args), null) 
+        { 
+            ErrorCode = errorCode;  
+        }
     }
 }

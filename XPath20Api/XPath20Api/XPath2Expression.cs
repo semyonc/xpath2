@@ -1,7 +1,7 @@
 ﻿// Microsoft Public License (Ms-PL)
 // See the file License.rtf or License.txt for the license details.
 
-// Copyright (c) 2011, Semyon A. Chertkov (semyonc@gmail.com)
+// Copyright (c) 2011-2014, Semyon A. Chertkov (semyonc@gmail.com)
 // All rights reserved.
 
 using System;
@@ -25,31 +25,19 @@ namespace Wmhelp.XPath2
     {
         private string expr;
         private AbstractNode exprTree;
-        private object[] dataPool;
-        private XPath2ResultType? returnType;
+        private XPath2Context context;
+        private XPath2ResultType? resultType;
 
-        private XPath2Expression(String expr, AbstractNode exprTree, NameBinder.ReferenceLink[] variables, object[] variableValues)
+        private XPath2Expression(string expr, AbstractNode exprTree, XPath2Context context)
         {
             this.expr = expr;
             this.exprTree = exprTree;
-            dataPool = new object[exprTree.Context.NameBinder.Length];
-            if (variables != null)
-            {
-                for (int k = 0; k < variables.Length; k++)
-                    variables[k].Set(dataPool, PrepareValue(variableValues[k]));
-            }
-        }
-
-        private XPath2Expression(String expr, AbstractNode exprTree, object[] dataPool)
-        {
-            this.expr = expr;
-            this.exprTree = exprTree;
-            this.dataPool = dataPool;
+            this.context = context;
         }
 
         public XPath2Expression Clone()
         {
-            return new XPath2Expression(expr, exprTree, dataPool);
+            return new XPath2Expression(expr, exprTree, context);
         }
 
         private IEnumerable<XPathItem> CreateIterator(IEnumerable<XNode> en)
@@ -88,42 +76,22 @@ namespace Wmhelp.XPath2
 
         public static XPath2Expression Compile(string xpath)
         {
-            return Compile(xpath, null, null);
+            return Compile(xpath, null);
         }
-
-        public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver)
-        {
-            return Compile(xpath, resolver, null);
-        }
-
-        public static XPath2Expression Compile(string xpath, object arg)
-        {
-            return Compile(xpath, null, arg);
-        }     
 
         public static object Evaluate(string xpath2, object arg)
         {
             return Evaluate(xpath2, null, arg);
-        }
-
-        public static object Evaluate(string xpath2, IDictionary<XmlQualifiedName, object> param)
-        {
-            return Evalute(xpath2, null, param);
-        }
-
-        public static object Evaluate(string xpath2, IXmlNamespaceResolver nsResolver)
-        {
-            return Evaluate(xpath2, nsResolver, null);
-        }
+        }        
 
         public static object Evaluate(string xpath2, IXmlNamespaceResolver nsResolver, object arg)
         {
-            return XPath2Expression.Compile(xpath2, nsResolver, arg).Evaluate();
+            return XPath2Expression.Compile(xpath2, nsResolver).EvaluateWithProperties(null, arg);
         }
 
         public static object Evalute(string xpath2, IXmlNamespaceResolver nsResolver, IDictionary<XmlQualifiedName, object> param)
         {
-            return XPath2Expression.Compile(xpath2, nsResolver, param).Evaluate();
+            return XPath2Expression.Compile(xpath2, nsResolver).Evaluate(null, param);
         }
 
         public static IEnumerable<T> Select<T>(string xpath, object arg)
@@ -135,7 +103,7 @@ namespace Wmhelp.XPath2
         public static IEnumerable<T> Select<T>(string xpath, IXmlNamespaceResolver resolver, object arg)
             where T : XObject
         {
-            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver, arg).Evaluate());
+            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver).EvaluateWithProperties(null, arg));
             foreach (XPathItem item in iter)
                 if (item.IsNode)
                 {
@@ -156,101 +124,109 @@ namespace Wmhelp.XPath2
 
         public static IEnumerable<Object> SelectValues(string xpath, IXmlNamespaceResolver resolver, object arg)
         {
-            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver, arg).Evaluate());
+            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver).EvaluateWithProperties(null, arg));
             while (iter.MoveNext())
                 yield return iter.Current.GetTypedValue();
         }
 
-        public static IEnumerable<Object> SelectValues(string xpath, IDictionary<XmlQualifiedName,object> param)
+        public static IEnumerable<Object> SelectValues(string xpath, IDictionary<XmlQualifiedName, object> param)
         {
             return SelectValues(xpath, null, param);
         }
 
-        public static IEnumerable<Object> SelectValues(string xpath, IXmlNamespaceResolver resolver, IDictionary<XmlQualifiedName, object> param)
+        public static IEnumerable<Object> SelectValues(string xpath, IXmlNamespaceResolver resolver, IDictionary<XmlQualifiedName, object> vars)
         {
-            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver, param).Evaluate());
+            XPath2NodeIterator iter = XPath2NodeIterator.Create(Compile(xpath, resolver).Evaluate(null, vars));
             while (iter.MoveNext())
                 yield return iter.Current.GetTypedValue();
         }
 
-        public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver, object arg)
-        {
-            IDictionary<string, object> param = null;
-            if (arg != null)
-            {
-                Type type = arg.GetType();
-                if (type.IsArray)
-                    throw new ArgumentException("arg");
-                PropertyInfo[] props = type.GetProperties();
-                param = new Dictionary<string, object>(props.Length);
-                for (int k = 0; k < props.Length; k++)
-                {
-                    PropertyInfo property = props[k];
-                    param.Add(property.Name, property.GetValue(arg, null)); 
-                }
-            }
-            return Compile(xpath, resolver, param);
-        }
-
-        public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver, IDictionary<XmlQualifiedName, object> param)
+        public static XPath2Expression Compile(string xpath, IXmlNamespaceResolver resolver)
         {
             if (xpath == null)
                 throw new ArgumentNullException("xpath");
             if (xpath == "")
-                throw new XPath2Exception("Empty xpath expression");
-            NameBinder.ReferenceLink[] variables = null;
-            object[] variableValues = null;
+                throw new XPath2Exception("", "Empty xpath expression");
             XPath2Context context = new XPath2Context(resolver);
-            if (param != null)
-            {
-                variables = new NameBinder.ReferenceLink[param.Count];
-                variableValues = new object[param.Count];
-                var array = new KeyValuePair<XmlQualifiedName, object>[param.Count];
-                param.CopyTo(array, 0);
-                for (int k = 0; k < array.Length; k++)
-                {
-                    variables[k] = context.NameBinder.PushVar(array[k].Key);
-                    variableValues[k] = array[k].Value;
-                }
-            }
             Tokenizer tokenizer = new Tokenizer(xpath);
             YYParser parser = new YYParser(context);
             AbstractNode exprTree = (AbstractNode)parser.yyparseSafe(tokenizer);
-            exprTree.Bind();            
-            return new XPath2Expression(xpath, exprTree, variables, variableValues);
+            return new XPath2Expression(xpath, exprTree, context);
         }
 
         public object Evaluate()
         {
-            return Evaluate(null);
+            return Evaluate(null, null);
         }
 
-        public object Evaluate(IContextProvider provider)
+        private object[] BindExpr(IDictionary<XmlQualifiedName, object> vars)
         {
-            object res = exprTree.Execute(provider, dataPool);           
+            XPath2RunningContext runningContext = new XPath2RunningContext();            
+            NameBinder.ReferenceLink[] variables = null;
+            object[] variableValues = null;
+            if (vars != null)
+            {
+                variables = new NameBinder.ReferenceLink[vars.Count];
+                variableValues = new object[vars.Count];
+                var array = new KeyValuePair<XmlQualifiedName, object>[vars.Count];
+                vars.CopyTo(array, 0);
+                for (int k = 0; k < array.Length; k++)
+                {
+                    variables[k] = runningContext.NameBinder.PushVar(array[k].Key);
+                    variableValues[k] = array[k].Value;
+                }
+            }
+            context.RunningContext = runningContext;
+            exprTree.Bind();
+            object[] dataPool = new object[runningContext.NameBinder.Length];
+            if (vars != null)
+                for (int k = 0; k < variables.Length; k++)
+                    variables[k].Set(dataPool, PrepareValue(variableValues[k]));
+            return dataPool;
+        }
+
+        public object Evaluate(IContextProvider provider, IDictionary<XmlQualifiedName, object> vars)
+        {
+            object res = exprTree.Execute(provider, BindExpr(vars));
             if (res is XPathItem)
             {
                 XPathItem item = (XPathItem)res;
                 if (!item.IsNode)
                     res = item.TypedValue;
             }
-            returnType = CoreFuncs.GetXPath2ResultType(res);
+            resultType = CoreFuncs.GetXPath2ResultType(res);
             ValueProxy proxy = res as ValueProxy;
             if (proxy != null)
                 return proxy.Value;
             return res;
         }
 
+        public object EvaluateWithProperties(IContextProvider provider, object props)
+        {
+            IDictionary<XmlQualifiedName, object> vars = null;
+            if (props != null)
+            {
+                Type type = props.GetType();
+                if (type.IsArray)
+                    throw new ArgumentException("props");
+                PropertyInfo[] propsInfo = type.GetProperties();
+                vars = new Dictionary<XmlQualifiedName, object>(propsInfo.Length);
+                for (int k = 0; k < propsInfo.Length; k++)
+                {
+                    PropertyInfo property = propsInfo[k];
+                    vars.Add(new XmlQualifiedName(property.Name), property.GetValue(props, null));
+                }
+            }
+            return Evaluate(provider, vars);
+        }
+
         public String Expression { get { return expr; } }
 
-        public XPath2ResultType ReturnType
-        { 
-            get 
-            {
-                if (!returnType.HasValue)
-                    returnType = exprTree.GetReturnType(dataPool);
-                return returnType.Value;
-            } 
-        }
+        public XPath2ResultType GetResultType(IDictionary<XmlQualifiedName, object> vars)
+        {
+            if (!resultType.HasValue)
+                resultType = exprTree.GetReturnType(BindExpr(vars));
+            return resultType.Value;
+        }        
     }
 }

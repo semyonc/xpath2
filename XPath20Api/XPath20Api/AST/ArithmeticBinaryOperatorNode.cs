@@ -40,11 +40,11 @@ namespace Wmhelp.XPath2.AST
             }
             catch (DivideByZeroException ex)
             {
-                throw new XPath2Exception(ex.Message, ex);
+                throw new XPath2Exception("", ex.Message, ex);
             }
             catch (OverflowException ex)
             {
-                throw new XPath2Exception(ex.Message, ex);
+                throw new XPath2Exception("", ex.Message, ex);
             }
         }
 

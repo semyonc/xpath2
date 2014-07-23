@@ -84,7 +84,7 @@ namespace Wmhelp.XPath2
 
 
     [DebuggerDisplay("{curr}")]
-    //[DebuggerTypeProxy(typeof(XQueryNodeIteratorDebugView))]
+    [DebuggerTypeProxy(typeof(XPath2NodeIteratorDebugView))]
     public abstract class XPath2NodeIterator: ICloneable, IEnumerable, IEnumerable<XPathItem>
     {
         internal int count = -1;
@@ -223,6 +223,20 @@ namespace Wmhelp.XPath2
 
         public abstract XPath2NodeIterator CreateBufferedIterator();
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var node in ToList())
+            {
+                sb.Append(node.ToString());
+                sb.Append(", ");
+            }
+            String s =  sb.ToString();
+            if (String.IsNullOrEmpty(s))
+                return "<empty>";
+            return s;
+        }
+
         protected virtual void Init()
         {
         }
@@ -334,7 +348,7 @@ namespace Wmhelp.XPath2
             #endregion
         }
 
-        internal class SingleIterator : XPath2NodeIterator
+        public class SingleIterator : XPath2NodeIterator
         {
             private XPathItem _item;            
 
@@ -411,5 +425,47 @@ namespace Wmhelp.XPath2
             }
         }
 
+    }
+
+    internal class XPath2NodeIteratorDebugView
+    {
+        private XPath2NodeIterator iter;
+
+        public XPath2NodeIteratorDebugView(XPath2NodeIterator iter)
+        {
+            this.iter = iter;
+        }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+        public XPathItem[] Items
+        {
+            get
+            {
+                List<XPathItem> res = new List<XPathItem>();
+                foreach (XPathItem item in iter)
+                {
+                    if (res.Count == 10)
+                        break;
+                    res.Add(item.Clone());
+                }
+                return res.ToArray();
+            }
+        }
+
+        public XPathItem Current
+        {
+            get
+            {
+                return iter.Current;
+            }
+        }
+
+        public int CurrentPosition
+        {
+            get
+            {
+                return iter.CurrentPosition;
+            }
+        }
     }
 }

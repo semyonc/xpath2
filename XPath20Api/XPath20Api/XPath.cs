@@ -45,9 +45,9 @@ namespace Wmhelp.XPath2
 			{
 				throw;
 			}
-			catch (Exception)  
+			catch (Exception)   
 			{
-				throw new XPath2Exception ("{2} at line {1} pos {0}", tok.ColNo, tok.LineNo, errorText.ToString());
+				throw new XPath2Exception ("XPST0003", "{2} at line {1} pos {0}", tok.ColNo, tok.LineNo, errorText.ToString());
 			}
 		}
 
@@ -766,17 +766,17 @@ case 62:
 	 ValueNode value = yyVals[-2+yyTop] as ValueNode;
 	 bool isString = yyVals[-2+yyTop] is String || (value != null && value.Content is String);
      if (destType == null)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:untyped");
+         throw new XPath2Exception("XPST0051",Properties.Resources.XPST0051, "xs:untyped");
      if (destType.SchemaType == SequenceType.XmlSchema.AnyType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyType");
+         throw new XPath2Exception("XPST0051",Properties.Resources.XPST0051, "xs:anyType");
      if (destType.SchemaType == SequenceType.XmlSchema.AnySimpleType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anySimpleType");
+         throw new XPath2Exception("XPST0051",Properties.Resources.XPST0051, "xs:anySimpleType");
      if (destType.TypeCode == XmlTypeCode.AnyAtomicType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyAtomicType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anyAtomicType");
      if (destType.TypeCode == XmlTypeCode.Notation)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080", Properties.Resources.XPST0080, destType);
      if (destType.Cardinality == XmlTypeCardinality.ZeroOrMore || destType.Cardinality == XmlTypeCardinality.OneOrMore)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080",Properties.Resources.XPST0080, destType);
      yyVal = new UnaryOperatorNode(context, (provider, arg) => CoreFuncs.Castable(context, arg, destType, isString), yyVals[-2+yyTop], XPath2ResultType.Boolean);
   }
   break;
@@ -787,17 +787,17 @@ case 64:
 	 ValueNode value = yyVals[-2+yyTop] as ValueNode;
 	 bool isString = yyVals[-2+yyTop] is String || (value != null && value.Content is String);
      if (destType == null)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:untyped");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:untyped");
      if (destType.SchemaType == SequenceType.XmlSchema.AnyType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anyType");
      if (destType.SchemaType == SequenceType.XmlSchema.AnySimpleType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anySimpleType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anySimpleType");
      if (destType.TypeCode == XmlTypeCode.AnyAtomicType)
-         throw new XPath2Exception(Properties.Resources.XPST0051, "xs:anyAtomicType");
+         throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "xs:anyAtomicType");
      if (destType.TypeCode == XmlTypeCode.Notation)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080", Properties.Resources.XPST0080, destType);
      if (destType.Cardinality == XmlTypeCardinality.ZeroOrMore || destType.Cardinality == XmlTypeCardinality.OneOrMore)
-         throw new XPath2Exception(Properties.Resources.XPST0080, destType);
+         throw new XPath2Exception("XPST0080", Properties.Resources.XPST0080, destType);
      yyVal = new UnaryOperatorNode(context, (provider, arg) => 
 		CoreFuncs.CastTo(context, arg, destType, isString), yyVals[-2+yyTop], CoreFuncs.GetXPath2ResultType(destType));
   }
@@ -1017,7 +1017,7 @@ case 106:
       string ncname = (String)yyVals[-2+yyTop];
       string ns = context.NamespaceManager.LookupNamespace(ncname);
       if (ns == null)
-        throw new XPath2Exception(Properties.Resources.XPST0081, ncname);
+        throw new XPath2Exception("XPST0081", Properties.Resources.XPST0081, ncname);
       yyVal = XmlQualifiedNameTest.New(null, ns);      
    }
   break;
@@ -1112,9 +1112,9 @@ case 128:
             SequenceType seqtype =
                new SequenceType((XmlSchemaSimpleType)schemaType, XmlTypeCardinality.One, null);
             if (seqtype == null)
-               throw new XPath2Exception(Properties.Resources.XPST0051, "untyped");
+               throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "untyped");
             if (seqtype.TypeCode == XmlTypeCode.Notation)
-               throw new XPath2Exception(Properties.Resources.XPST0051, "NOTATION");
+               throw new XPath2Exception("XPST0051", Properties.Resources.XPST0051, "NOTATION");
             yyVal = new UnaryOperatorNode(context, (provider, arg) => 
 			   CoreFuncs.CastToItem(context, arg, seqtype), args[0], CoreFuncs.GetXPath2ResultType(seqtype)); 
           }
@@ -1329,7 +1329,7 @@ case 171:
 	     context.NamespaceManager.DefaultNamespace, context.NameTable);
       XmlSchemaElement schemaElement = (XmlSchemaElement)context.SchemaSet.GlobalElements[qname];
       if (schemaElement == null)
-          throw new XPath2Exception(Properties.Resources.XPST0008, qname);
+          throw new XPath2Exception("XPST0008", Properties.Resources.XPST0008, qname);
       yyVal = new SequenceType(schemaElement);      
    }
   break;
@@ -1340,7 +1340,7 @@ case 172:
 	     context.NamespaceManager.DefaultNamespace, context.NameTable);
       XmlSchemaAttribute schemaAttribute = (XmlSchemaAttribute)context.SchemaSet.GlobalAttributes[qname];
       if (schemaAttribute == null)
-          throw new XPath2Exception(Properties.Resources.XPST0008, qname);
+          throw new XPath2Exception("XPST0008", Properties.Resources.XPST0008, qname);
       yyVal = new SequenceType(schemaAttribute);      
    }
   break;

@@ -58,7 +58,7 @@ namespace Wmhelp.XPath2.Value
             {
                 if (!DateTimeOffset.TryParseExact(text.Substring(0, text.Length - 1), GYearMonthFormats,
                         CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTimeOffset))
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:gYearMonth");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:gYearMonth");
                 return new GYearMonthValue(s, dateTimeOffset);
             }
             else
@@ -68,7 +68,7 @@ namespace Wmhelp.XPath2.Value
                     return new GYearMonthValue(s, dateTime);
                 if (!DateTimeOffset.TryParseExact(text, GYearMonthOffsetFormats, CultureInfo.InvariantCulture,
                     DateTimeStyles.None, out dateTimeOffset))
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:gYearMonth");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:gYearMonth");
                 return new GYearMonthValue(s, dateTimeOffset);
             }
         }    

@@ -101,7 +101,7 @@ namespace Wmhelp.XPath2.Iterator
                     return null;
                 XPathNavigator current = iter.Current as XPathNavigator;
                 if (current == null)
-                    throw new XPath2Exception(Properties.Resources.XPTY0019, iter.Current.Value);
+                    throw new XPath2Exception("XPTY0019", Properties.Resources.XPTY0019, iter.Current.Value);
                 if (curr == null || !curr.MoveTo(current))
                     curr = current.Clone();
                 sequentialPosition = 0;

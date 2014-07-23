@@ -24,7 +24,7 @@ namespace Wmhelp.XPath2.AST
         {
             _func = FunctionTable.Inst.Bind(name, ns, 0);
             if (_func == null)
-                throw new XPath2Exception(Properties.Resources.XPST0017, name, 0, ns);
+                throw new XPath2Exception("XPST0017", Properties.Resources.XPST0017, name, 0, ns);
             _name = name;
             _ns = ns;
         }
@@ -34,7 +34,7 @@ namespace Wmhelp.XPath2.AST
         {
             _func = FunctionTable.Inst.Bind(name, ns, nodes.Count);
             if (_func == null)
-                throw new XPath2Exception(Properties.Resources.XPST0017, name, nodes.Count, ns);
+                throw new XPath2Exception("XPST0017", Properties.Resources.XPST0017, name, nodes.Count, ns);
             _name = name;
             _ns = ns;
             AddRange(nodes);

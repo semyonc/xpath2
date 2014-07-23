@@ -129,7 +129,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:boolean");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:boolean");
             }
         }
 
@@ -141,7 +141,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:unsignedByte");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:unsignedByte");
             }
         }
 
@@ -163,7 +163,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:decimal");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:decimal");
             }
         }
 
@@ -186,7 +186,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:float");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:float");
             }
         }
 
@@ -213,7 +213,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:double");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:double");
             }
         }
 
@@ -225,7 +225,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:short");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:short");
             }
         }
 
@@ -237,7 +237,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:int");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:int");
             }
         }
 
@@ -249,7 +249,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:long");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:long");
             }
         }
 
@@ -261,7 +261,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:byte");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:byte");
             }
         }
 
@@ -283,7 +283,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:unsignedShort");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:unsignedShort");
             }
         }
 
@@ -295,7 +295,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:unsignedInt");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:unsignedInt");
             }
         }
 
@@ -307,7 +307,7 @@ namespace Wmhelp.XPath2.Value
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, Value, "xs:unsignedLong");
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, Value, "xs:unsignedLong");
             }
         }
 

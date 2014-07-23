@@ -102,7 +102,7 @@ namespace Wmhelp.XPath2.Value
             if (p != -1)
             {
                 if (p + 8 < text.Length && text[p + 8] == '.')
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:dateTime");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:dateTime");
                 text = text.Substring(0, p) + "00:00:00" + text.Substring(p + 8);
             }
             if (text.EndsWith("Z"))
@@ -110,7 +110,7 @@ namespace Wmhelp.XPath2.Value
                 if (!DateTimeOffset.TryParseExact(text.Substring(0, text.Length - 1), TimeFormats,
                         CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | 
                         DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite, out dateTimeOffset))
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:time");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:time");
                 return new TimeValue(dateTimeOffset);
             }
             else
@@ -120,7 +120,7 @@ namespace Wmhelp.XPath2.Value
                     return new TimeValue(dateTime);
                 if (!DateTimeOffset.TryParseExact(text, TimeOffsetFormats, CultureInfo.InvariantCulture, 
                     DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite, out dateTimeOffset))
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:time");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:time");
                 return new TimeValue(dateTimeOffset);
             }
         }
@@ -212,7 +212,7 @@ namespace Wmhelp.XPath2.Value
             protected override bool Eq(ValueProxy val)
             {
                 if (val.GetValueCode() != ProxyValueCode)
-                    throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:eq",
+                    throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:eq",
                         new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                         new SequenceType(val.Value.GetType(), XmlTypeCardinality.One));
                 return _value.Equals(((Proxy)val)._value);
@@ -221,7 +221,7 @@ namespace Wmhelp.XPath2.Value
             protected override bool Gt(ValueProxy val)
             {
                 if (val.GetValueCode() != ProxyValueCode)
-                    throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:add",
+                    throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:add",
                         new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                         new SequenceType(_value.Value.GetType(), XmlTypeCardinality.One));
                 return ((IComparable)_value).CompareTo(((Proxy)val)._value) > 0;
@@ -234,7 +234,7 @@ namespace Wmhelp.XPath2.Value
 
             protected override ValueProxy Neg()
             {
-                throw new XPath2Exception(Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
+                throw new XPath2Exception("", Properties.Resources.UnaryOperatorNotDefined, "fn:unary-minus",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One));
             }
 
@@ -246,7 +246,7 @@ namespace Wmhelp.XPath2.Value
                         return new Proxy(TimeValue.Add(_value, (DayTimeDurationValue)value.Value));
 
                     default:
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:add",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:add",
                             new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                             new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
                 }
@@ -262,7 +262,7 @@ namespace Wmhelp.XPath2.Value
                         return new Proxy(TimeValue.Add(_value, -(DayTimeDurationValue)value.Value));
 
                     default:
-                        throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:sub",
+                        throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:sub",
                             new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                             new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
                 }
@@ -270,28 +270,28 @@ namespace Wmhelp.XPath2.Value
 
             protected override ValueProxy Mul(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mul",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mul",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Div(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:div",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:div",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override Integer IDiv(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:idiv",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }
 
             protected override ValueProxy Mod(ValueProxy value)
             {
-                throw new XPath2Exception(Properties.Resources.BinaryOperatorNotDefined, "op:mod",
+                throw new XPath2Exception("", Properties.Resources.BinaryOperatorNotDefined, "op:mod",
                     new SequenceType(_value.GetType(), XmlTypeCardinality.One),
                     new SequenceType(value.Value.GetType(), XmlTypeCardinality.One));
             }

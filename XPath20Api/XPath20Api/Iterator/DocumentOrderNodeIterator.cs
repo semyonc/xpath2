@@ -35,7 +35,7 @@ namespace Wmhelp.XPath2.Iterator
                     isNode = baseIter.Current.IsNode;
                 else
                     if (baseIter.Current.IsNode != isNode)
-                        throw new XPath2Exception(Properties.Resources.XPTY0018, baseIter.Current.Value);
+                        throw new XPath2Exception("XPTY0018", Properties.Resources.XPTY0018, baseIter.Current.Value);
                 itemSet.Add(baseIter.Current.Clone());
             }
             if (isNode.HasValue && isNode.Value)

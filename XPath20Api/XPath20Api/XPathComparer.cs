@@ -48,7 +48,7 @@ namespace Wmhelp.XPath2
                         }
                 }
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     "xs:anyAtomicType", "node()* in function op:union,op:intersect and op:except");
         }
         #endregion
@@ -65,7 +65,7 @@ namespace Wmhelp.XPath2
             if (nav1 != null && nav2 != null)
                 return nav1.IsSamePosition(nav2);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "xs:anyAtomicType",
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "xs:anyAtomicType",
                     "node()* in function op:union,op:intersect and op:except");
         }
 
@@ -74,7 +74,7 @@ namespace Wmhelp.XPath2
             if (obj.IsNode)
                 return XPathNavigator.NavigatorComparer.GetHashCode(obj);
             else
-                throw new XPath2Exception(Properties.Resources.XPTY0004, "xs:anyAtomicType",
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004, "xs:anyAtomicType",
                     "node()* in function op:union,op:intersect and op:except");
         }
 

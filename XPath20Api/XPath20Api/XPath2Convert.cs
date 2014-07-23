@@ -1,12 +1,11 @@
-﻿// Based on a published algorithm by Guy L. Steele and Jon L. White.
-// Contributor(s): the fppfppExponential routine, and some of the constant declarations 
-// are from the class FloatingPointConverter by Michael H. Kay
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
+
+#if !NET35
 using System.Numerics;
+#endif
 
 using System.Xml;
 using System.Xml.Schema;
@@ -17,11 +16,52 @@ using Wmhelp.XPath2.Value;
 namespace Wmhelp.XPath2
 {
     public static class XPath2Convert
-    {    
+    {
+        public static string ToString(object value)
+        {
+            if (value == null)
+                return "false";
+            if (value is System.Decimal)
+                return ToString((decimal)value);
+            else if (value is System.Double)
+                return ToString((double)value);
+            else if (value is System.Single)
+                return ToString((float)value);
+            else if (value is System.Boolean)
+                return ToString((bool)value);
+            else if (value is System.DateTime)
+                return new DateTimeValue(false, (DateTime)value).ToString();
+            else if (value is System.TimeSpan)
+                return new DayTimeDurationValue((TimeSpan)value).ToString();
+            return value.ToString();
+        }
+
         public static string ToString(bool value)
         {
             return value ? "true" : "false";
         }
+
+        public static string ToString(decimal value)
+        {
+            if (value != Decimal.Truncate(value))
+                return value.ToString("0.0#################", CultureInfo.InvariantCulture);
+            return value.ToString("0", CultureInfo.InvariantCulture);
+        }
+
+#if NET35
+        public static string ToString(double value)
+        {
+            value.ToString(CultureInfo.InvariantCulture);
+        }
+
+        public static string ToString(float value)
+        {
+            value.ToString(CultureInfo.InvariantCulture);
+        }
+#else
+        // Based on a published algorithm by Guy L. Steele and Jon L. White.
+        // Contributor(s): the fppfppExponential routine, and some of the constant declarations 
+        // are from the class FloatingPointConverter by Michael H. Kay
 
         private static char[] charForDigit = 
         {
@@ -37,13 +77,6 @@ namespace Wmhelp.XPath2
         private static long doubleExpMask = 0x7ff0000000000000L;
         private static int doubleExpShift = 52;
         private static int doubleExpBias = 1023;
-
-        public static string ToString(decimal value)
-        {
-            if (value != Decimal.Truncate(value))
-                return value.ToString("0.0#################", CultureInfo.InvariantCulture);
-            return value.ToString("0", CultureInfo.InvariantCulture);
-        }
 
         public static string ToString(double value)
         {
@@ -115,25 +148,6 @@ namespace Wmhelp.XPath2
             else                
                 fppfpp(sb, exp, fraction, 23);
             return sb.ToString();
-        }
-
-        public static string ToString(object value)
-        {
-            if (value == null)
-                return "false";
-            if (value is System.Decimal)
-                return ToString((decimal)value);
-            else if (value is System.Double)
-                return ToString((double)value);
-            else if (value is System.Single)
-                return ToString((float)value);
-            else if (value is System.Boolean)
-                return ToString((bool)value);
-            else if (value is System.DateTime)
-                return new DateTimeValue(false, (DateTime)value).ToString();
-            else if (value is System.TimeSpan)
-                return new DayTimeDurationValue((TimeSpan)value).ToString();
-            return value.ToString();
         }
 
         private static void fppfpp(StringBuilder sb, int e, long f, int p)
@@ -380,6 +394,7 @@ namespace Wmhelp.XPath2
             sb.Append(H.ToString());            
             return sb.ToString();
         }
+#endif
 
         public static object ChangeType(XmlSchemaType xmlType, object value, SequenceType type, 
             XmlNameTable nameTable, XmlNamespaceManager nsmgr)
@@ -418,7 +433,7 @@ namespace Wmhelp.XPath2
                                 return DurationValue.Parse(value.ToString());
                             case XmlTypeCode.QName:
                                 if (xmlType.TypeCode == XmlTypeCode.UntypedAtomic)
-                                    throw new XPath2Exception(Properties.Resources.XPTY0004,
+                                    throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                                         new SequenceType(xmlType, XmlTypeCardinality.One, null), type);
                                 return QNameValue.Parse(value.ToString(), nsmgr);
                             case XmlTypeCode.Notation:
@@ -446,7 +461,7 @@ namespace Wmhelp.XPath2
                                             return new HexBinaryValue((byte[])res);
                                         case XmlTypeCode.Base64Binary:
                                             if (text.EndsWith("==") && (text.Length < 3 || "AQgw".IndexOf(text[text.Length - 3]) == -1))
-                                                throw new XPath2Exception(Properties.Resources.FORG0001, value);
+                                                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, value);
                                             return new Base64BinaryValue((byte[])res);
                                         case XmlTypeCode.Idref:
                                             if (type.SchemaType == SequenceType.XmlSchema.IDREFS)
@@ -519,7 +534,7 @@ namespace Wmhelp.XPath2
                             case XmlTypeCode.Boolean:
                                 return CoreFuncs.BooleanValue(value);
                             case XmlTypeCode.AnyUri:
-                                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                                     new SequenceType(xmlType, XmlTypeCardinality.One, null), type);
                             default:
                                 return ChangeType(value, type.ItemType);
@@ -544,15 +559,15 @@ namespace Wmhelp.XPath2
             }
             catch (InvalidCastException)
             {
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(xmlType, XmlTypeCardinality.One, null), type);
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(xmlType, XmlTypeCardinality.One, null),type);
             }            
-            throw new XPath2Exception(Properties.Resources.XPTY0004,
+            throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                 new SequenceType(xmlType, XmlTypeCardinality.One, null), type);
         }
 
@@ -568,12 +583,12 @@ namespace Wmhelp.XPath2
             }
             catch (FormatException)
             {
-                throw new XPath2Exception(Properties.Resources.FORG0001, value,
+                throw new XPath2Exception("FORG0001", Properties.Resources.FORG0001, value,
                     new SequenceType(returnType, XmlTypeCardinality.One));
             }
             catch (OverflowException)
             {
-                throw new XPath2Exception(Properties.Resources.FOAR0002, value,
+                throw new XPath2Exception("FOAR0002", Properties.Resources.FOAR0002, value,
                     new SequenceType(returnType, XmlTypeCardinality.One));
             }
         }
@@ -586,7 +601,7 @@ namespace Wmhelp.XPath2
             if (value == null)
                 value = CoreFuncs.False;
             if (type.TypeCode == XmlTypeCode.None)
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                    new SequenceType(value.GetType(), XmlTypeCardinality.One), "empty-sequence()");
             if (value.GetType() != type.ItemType)
             {
@@ -672,7 +687,7 @@ namespace Wmhelp.XPath2
                 if (type.TypeCode == XmlTypeCode.Duration &&
                     (value is YearMonthDurationValue || value is DayTimeDurationValue))
                     return value;
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One), type);
             }
             return value;
@@ -685,7 +700,7 @@ namespace Wmhelp.XPath2
             if (value == null)
                 value = CoreFuncs.False;
             if (type.TypeCode == XmlTypeCode.None)
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                    new SequenceType(value.GetType(), XmlTypeCardinality.One), "empty-sequence()");
             if (value.GetType() != type.ItemType && 
                 type.ItemType != typeof(System.Object))
@@ -726,7 +741,7 @@ namespace Wmhelp.XPath2
                     else if (value is System.SByte)
                         return (Decimal)(sbyte)value;
                 }
-                throw new XPath2Exception(Properties.Resources.XPTY0004,
+                throw new XPath2Exception("XPTY0004", Properties.Resources.XPTY0004,
                     new SequenceType(value.GetType(), XmlTypeCardinality.One), type);
             }
             return value;
@@ -750,7 +765,10 @@ namespace Wmhelp.XPath2
                         return new UntypedAtomic(nav.Value);
                 }
             }
-            switch (schemaInfo.SchemaType.TypeCode)
+            XmlTypeCode typeCode = schemaInfo.SchemaType.TypeCode;
+            if (typeCode == XmlTypeCode.AnyAtomicType && schemaInfo.MemberType != null)
+                typeCode = schemaInfo.MemberType.TypeCode;
+            switch (typeCode)
             {
                 case XmlTypeCode.UntypedAtomic:
                     return new UntypedAtomic(nav.Value);

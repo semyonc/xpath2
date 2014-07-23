@@ -46,7 +46,7 @@ namespace Wmhelp.XPath2.Value
             {
                 if (!DateTimeOffset.TryParseExact(text.Substring(0, text.Length - 1), "yyyy---dd",
                         CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out dateTimeOffset))
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:gDay");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:gDay");
                 return new GDayValue(dateTimeOffset);
             }
             else
@@ -54,7 +54,7 @@ namespace Wmhelp.XPath2.Value
                 if (DateTime.TryParseExact(text, "yyyy---dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
                     return new GDayValue(dateTime);
                 if (!DateTimeOffset.TryParseExact(text, "yyyy---ddzzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTimeOffset))
-                    throw new XPath2Exception(Properties.Resources.InvalidFormat, text, "xs:gDay");
+                    throw new XPath2Exception("", Properties.Resources.InvalidFormat, text, "xs:gDay");
                 return new GDayValue(dateTimeOffset);
             }
         }    

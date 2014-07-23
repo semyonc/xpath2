@@ -11,7 +11,7 @@ using Wmhelp.XPath2.MS;
 
 namespace Wmhelp.XPath2
 {
-    internal class QNameParser
+    public class QNameParser
     {
         public static XmlQualifiedName Parse(string name, IXmlNamespaceResolver resolver, XmlNameTable nameTable)
         {
@@ -34,7 +34,7 @@ namespace Wmhelp.XPath2
             {
                 string ns = resolver.LookupNamespace(prefix);
                 if (ns == null)
-                    throw new XPath2Exception(Properties.Resources.XPST0081, prefix);
+                    throw new XPath2Exception("XPST0081", Properties.Resources.XPST0081, prefix);
                 return new XmlQualifiedName(localName, ns);
             }
             else
